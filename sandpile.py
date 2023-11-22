@@ -34,22 +34,35 @@ cmap = plt.cm.viridis
 bounds = np.arange(0, MAXIMUM_GRAINS+1)
 norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
-def step():
-    # drop a grain on a uniformly selected location
-    # select a random location
-    x_coord_grain = random.randint(0, N_grid-1)
-    y_coord_grain = random.randint(0, N_grid-1)
+class Sandpile():
 
-    # print(x_coord_grain, y_coord_grain)
+    def __init__(self,N_grid=10, MAXIMUM_GRAINS=4):
+        self.grid = np.zeros((N_grid, N_grid))
+        self.N_grid = N_grid
+        self.MAXIMUM_GRAINS = MAXIMUM_GRAINS
 
-    #increment the count at that location
-    grid[x_coord_grain, y_coord_grain] += 1
-    print(grid)
-    # return grid
+    def step(self,):
+        self.drop_sandgrain()
+
+    def drop_sandgrain(self,):
+        # drop a grain on a uniformly selected location
+        # select a random location
+        x_coord_grain = random.randint(0, self.N_grid-1)
+        y_coord_grain = random.randint(0, self.N_grid-1)
+
+        # print(x_coord_grain, y_coord_grain)
+
+        #increment the count at that location
+        self.grid[x_coord_grain, y_coord_grain] += 1
+        print(self.grid)
+
+
+sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS)
+    
 
 def init():
     """initialize animation"""
-    img = axs.imshow(grid,cmap=cmap,norm=norm, origin="lower")
+    img = axs.imshow(sandpile.grid,cmap=cmap,norm=norm, origin="lower")
     plt.colorbar(img)
     
 
@@ -58,8 +71,8 @@ def init():
 
 def animate(i):
     print(i)
-    step()
-    img = axs.imshow(grid)
+    sandpile.step()
+    img = axs.imshow(sandpile.grid)
     global I
     I += 1
     # print(I)
