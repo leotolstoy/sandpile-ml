@@ -7,12 +7,12 @@ from time import time
 
 
 
-N_grid = 10 #number of cells per side
+N_grid = 5 #number of cells per side
 # N_tick_step = 5
 N_tick_step = 1
 
 grid = np.zeros((N_grid, N_grid))
-MAXIMUM_GRAINS = 4
+MAXIMUM_GRAINS = 3
 N_runs = 100
 dt = 1./30 # 30 fps
 frames = N_runs
@@ -30,6 +30,9 @@ axs.set_yticks(np.arange(-.5, N_grid, N_tick_step))
 axs.xaxis.set_tick_params(labelbottom=False)
 axs.yaxis.set_tick_params(labelleft=False)
 
+# https://stackoverflow.com/questions/43971138/python-plotting-colored-grid-based-on-values
+# https://stackoverflow.com/questions/7229971/2d-grid-data-visualization-in-python
+# https://matplotlib.org/stable/api/_as_gen/matplotlib.animation.FuncAnimation.html
 cmap = plt.cm.viridis
 bounds = np.arange(0, MAXIMUM_GRAINS+1)
 norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
@@ -40,9 +43,24 @@ class Sandpile():
         self.grid = np.zeros((N_grid, N_grid))
         self.N_grid = N_grid
         self.MAXIMUM_GRAINS = MAXIMUM_GRAINS
+        self.avalanche_size = 0
+        self.is_avalanching = False
 
     def step(self,):
-        self.drop_sandgrain()
+        # determine if we should avalanche, based on if any of the grid values
+        # are greater than the alloweable maximum grain number
+        self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
+
+        if not self.is_avalanching:
+            self.drop_sandgrain()
+            self.avalanche_size = 0
+
+        else:
+            self.avalanche()
+            self.avalanche_size += 1
+            
+
+
 
     def drop_sandgrain(self,):
         # drop a grain on a uniformly selected location
@@ -54,7 +72,52 @@ class Sandpile():
 
         #increment the count at that location
         self.grid[x_coord_grain, y_coord_grain] += 1
+        # print(self.grid)
+
+    def avalanche(self,):
+        print('AVALANCHING')
         print(self.grid)
+        # find indices where avalanching/unstable
+        # returns a Nx2 array of xy coordinates where N is the number of indices over the maximum
+        avalanche_idxs = np.argwhere(self.grid >= self.MAXIMUM_GRAINS)
+        N_avalanche_ixs = avalanche_idxs.shape[0]
+
+        print(avalanche_idxs)
+
+        #pick an unstable vertex at random
+        rand_idx = np.random.randint(N_avalanche_ixs)
+        print(rand_idx)
+        rand_unstable = avalanche_idxs[rand_idx,:]
+        print(rand_unstable)
+
+        x_coord_unstable = rand_unstable[0]
+        y_coord_unstable = rand_unstable[1]
+
+        print(x_coord_unstable, y_coord_unstable)
+
+        # topple the grid at this coordinate
+        self.grid[x_coord_unstable, y_coord_unstable] -= self.MAXIMUM_GRAINS
+
+        # increment neighboring vertex counts
+        self.increment_neighbors(x_coord_unstable, y_coord_unstable)
+
+        # print(self.grid)
+
+        # input()
+
+    def increment_neighbors(self, x_coord, y_coord):
+
+        if (x_coord - 1) >= 0:
+            self.grid[x_coord - 1, y_coord] += 1
+
+        if (x_coord + 1) < self.N_grid:
+            self.grid[x_coord + 1, y_coord] += 1
+        
+        if (y_coord - 1) >= 0:
+            self.grid[x_coord, y_coord - 1] += 1
+
+        if (y_coord + 1) < self.N_grid:
+            self.grid[x_coord, y_coord + 1] += 1
 
 
 sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS)
