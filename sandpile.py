@@ -6,14 +6,14 @@ import matplotlib as mpl
 from time import time
 
 
-
-N_grid = 5 #number of cells per side
+DO_ANIM = False
+N_grid = 7 #number of cells per side
 # N_tick_step = 5
 N_tick_step = 1
 
 grid = np.zeros((N_grid, N_grid))
-MAXIMUM_GRAINS = 3
-N_runs = 100
+MAXIMUM_GRAINS = 4
+N_runs = 10000
 dt = 1./30 # 30 fps
 frames = N_runs
 I = 0
@@ -45,6 +45,8 @@ class Sandpile():
         self.MAXIMUM_GRAINS = MAXIMUM_GRAINS
         self.avalanche_size = 0
         self.is_avalanching = False
+        self.was_avalanching_before = False
+        self.avalanche_sizes = []
 
     def step(self,):
         # determine if we should avalanche, based on if any of the grid values
@@ -53,11 +55,18 @@ class Sandpile():
 
         if not self.is_avalanching:
             self.drop_sandgrain()
-            self.avalanche_size = 0
+            
+            if self.was_avalanching_before:
+                self.avalanche_sizes.append(self.avalanche_size)
+                self.was_avalanching_before = False
+                self.avalanche_size = 0
+                print(self.avalanche_sizes)
+
 
         else:
             self.avalanche()
             self.avalanche_size += 1
+            self.was_avalanching_before = True
             
 
 
@@ -82,13 +91,13 @@ class Sandpile():
         avalanche_idxs = np.argwhere(self.grid >= self.MAXIMUM_GRAINS)
         N_avalanche_ixs = avalanche_idxs.shape[0]
 
-        print(avalanche_idxs)
+        # print(avalanche_idxs)
 
         #pick an unstable vertex at random
         rand_idx = np.random.randint(N_avalanche_ixs)
-        print(rand_idx)
+        # print(rand_idx)
         rand_unstable = avalanche_idxs[rand_idx,:]
-        print(rand_unstable)
+        # print(rand_unstable)
 
         x_coord_unstable = rand_unstable[0]
         y_coord_unstable = rand_unstable[1]
@@ -101,7 +110,8 @@ class Sandpile():
         # increment neighboring vertex counts
         self.increment_neighbors(x_coord_unstable, y_coord_unstable)
 
-        # print(self.grid)
+        print('POST TOPPLE')
+        print(self.grid)
 
         # input()
 
@@ -141,17 +151,25 @@ def animate(i):
     # print(I)
     return img, 
 
-# for i in range(N_runs):
-#     grid = step(i, grid)
-#     animate(grid)
-
 # choose the interval based on dt and the time to animate one step
 interval = 100 #delay between frames in milliseconds
 
+if DO_ANIM:
+    anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
 
-anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
+else:
+    for i in range(N_runs):
+        print(i)
+        sandpile.step()
+# get avalance sizes
+avalanche_sizes = np.array(sandpile.avalanche_sizes)
 
+#plot histogram and loglog
+hist_vals, x_recon = np.histogram(avalanche_sizes, density=True)
 
+fig, axs_hist = plt.subplots(2,1)
+axs_hist[0].hist(avalanche_sizes, density=True)
+axs_hist[1].loglog(x_recon[:-1],hist_vals,color='r',marker='o')
 # img = axs.imshow(grid)
 plt.show()
 
