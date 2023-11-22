@@ -7,14 +7,13 @@ from time import time
 
 
 DO_ANIM = False
-N_grid = 7 #number of cells per side
+N_grid = 50 #number of cells per side
 # N_tick_step = 5
 N_tick_step = 1
 
 grid = np.zeros((N_grid, N_grid))
 MAXIMUM_GRAINS = 4
-N_runs = 10000
-dt = 1./30 # 30 fps
+N_runs = 100000
 frames = N_runs
 I = 0
 fig = plt.figure()
@@ -84,8 +83,8 @@ class Sandpile():
         # print(self.grid)
 
     def avalanche(self,):
-        print('AVALANCHING')
-        print(self.grid)
+        # print('AVALANCHING')
+        # print(self.grid)
         # find indices where avalanching/unstable
         # returns a Nx2 array of xy coordinates where N is the number of indices over the maximum
         avalanche_idxs = np.argwhere(self.grid >= self.MAXIMUM_GRAINS)
@@ -102,7 +101,7 @@ class Sandpile():
         x_coord_unstable = rand_unstable[0]
         y_coord_unstable = rand_unstable[1]
 
-        print(x_coord_unstable, y_coord_unstable)
+        # print(x_coord_unstable, y_coord_unstable)
 
         # topple the grid at this coordinate
         self.grid[x_coord_unstable, y_coord_unstable] -= self.MAXIMUM_GRAINS
@@ -110,8 +109,8 @@ class Sandpile():
         # increment neighboring vertex counts
         self.increment_neighbors(x_coord_unstable, y_coord_unstable)
 
-        print('POST TOPPLE')
-        print(self.grid)
+        # print('POST TOPPLE')
+        # print(self.grid)
 
         # input()
 
@@ -143,7 +142,7 @@ def init():
 
 
 def animate(i):
-    print(i)
+    # print(i)
     sandpile.step()
     img = axs.imshow(sandpile.grid)
     global I
@@ -165,11 +164,13 @@ else:
 avalanche_sizes = np.array(sandpile.avalanche_sizes)
 
 #plot histogram and loglog
-hist_vals, x_recon = np.histogram(avalanche_sizes, density=True)
+bins = 10
+hist_vals, x_recon = np.histogram(avalanche_sizes, bins=bins, density=True)
 
 fig, axs_hist = plt.subplots(2,1)
-axs_hist[0].hist(avalanche_sizes, density=True)
+axs_hist[0].hist(avalanche_sizes,bins=bins, density=True)
 axs_hist[1].loglog(x_recon[:-1],hist_vals,color='r',marker='o')
+
 # img = axs.imshow(grid)
 plt.show()
 
