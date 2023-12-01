@@ -14,14 +14,23 @@ class Sandpile():
         # O O O 
         # O X O
         # O O O
-        self.grid = np.ones((N_grid + 2, N_grid + 2)) * -1e3
-        self.grid[1:N_grid+1, 1:N_grid+1] = np.zeros((N_grid, N_grid))
-        
+        # self.grid = np.ones((N_grid + 2, N_grid + 2)) * -1e3
+        # self.grid[1:N_grid+1, 1:N_grid+1] = np.zeros((N_grid, N_grid))
+
+
+        self.grid = np.zeros((N_grid, N_grid))
+
         self.N_grid = N_grid
-        self.left_bound_idx = 0 + 1
-        self.right_bound_idx = N_grid - 1 + 1
-        self.top_bound_idx = 0 + 1
-        self.bot_bound_idx = N_grid - 1 + 1
+        # self.left_bound_idx = 0 + 1
+        # self.right_bound_idx = N_grid - 1 + 1
+        # self.top_bound_idx = 0 + 1
+        # self.bot_bound_idx = N_grid - 1 + 1
+
+        self.left_bound_idx = 0
+        self.right_bound_idx = N_grid - 1
+        self.top_bound_idx = 0
+        self.bot_bound_idx = N_grid - 1
+
 
         self.MAXIMUM_GRAINS = MAXIMUM_GRAINS
         self.avalanche_size = 0
@@ -141,7 +150,7 @@ class Sandpile():
         self.print_grid()
         # print(self.grid)
 
-        input()
+        # input()
 
     def increment_neighbors(self, x_coord, y_coord):
 
@@ -158,8 +167,12 @@ class Sandpile():
             self.grid[x_coord, y_coord + 1] += 1
 
     #returns the part of the grid that contains the sand
+    # def get_sandpile(self,):
+    #     return self.grid[1:self.N_grid+1, 1:self.N_grid+1]
+
     def get_sandpile(self,):
-        return self.grid[1:self.N_grid+1, 1:self.N_grid+1]
+        return self.grid
+
 
     def print_grid(self,):
         print(self.get_sandpile())
