@@ -8,7 +8,7 @@ from time import time
 from util import Directions
 from sandpile import Sandpile
 
-DO_ANIM = True
+DO_ANIM = False
 N_grid = 5 #number of cells per side
 # N_tick_step = 5
 N_tick_step = 1
@@ -20,8 +20,8 @@ I = 0
 fig = plt.figure()
 
 #these bounds show the sandpile plus one square of void around it
-LIM_MIN = N_grid - 1 - 0.5
-LIM_MAX = 2*N_grid-0.5 + 1
+LIM_MIN = 1 - 1 - 0.5
+LIM_MAX = N_grid-0.5 + 1 + 1
 
 # LIM_MIN = 0
 # LIM_MAX = 3*N_grid-0.5
@@ -31,8 +31,8 @@ axs = fig.add_subplot(111, aspect='equal', autoscale_on=False,
                      xlim=(LIM_MIN, LIM_MAX), ylim=(LIM_MIN, LIM_MAX))
 # axs.grid()
 axs.grid(which='major', axis='both', linestyle='-', color='k', linewidth=1)
-axs.set_xticks(np.arange(-.5 + N_grid, N_grid*2, N_tick_step))
-axs.set_yticks(np.arange(-.5 + N_grid, N_grid*2, N_tick_step))
+axs.set_xticks(np.arange(-.5 + 1, N_grid+1, N_tick_step))
+axs.set_yticks(np.arange(-.5 + 1, N_grid+1, N_tick_step))
 # axs.set_xticks([])
 # axs.set_yticks([])
 

@@ -9,19 +9,19 @@ class Sandpile():
         # set up the total grid, which is the sandpile plus empty void around it
 
         # X = N_grid x N_grid sandpile which gets sand dropped on it
-        # O = N_grid x N_grid void which has a massively negative score
+        # O =  void which has a massively negative score
         # grid = 
         # O O O 
         # O X O
         # O O O
-        self.grid = np.ones((N_grid*3, N_grid*3)) * -1e3
-        self.grid[N_grid:N_grid*2, N_grid:N_grid*2] = np.zeros((N_grid, N_grid))
+        self.grid = np.ones((N_grid + 2, N_grid + 2)) * -1e3
+        self.grid[1:N_grid+1, 1:N_grid+1] = np.zeros((N_grid, N_grid))
         
         self.N_grid = N_grid
-        self.left_bound_idx = 0 + N_grid
-        self.right_bound_idx = N_grid - 1 + N_grid
-        self.top_bound_idx = 0 + N_grid
-        self.bot_bound_idx = N_grid - 1 + N_grid
+        self.left_bound_idx = 0 + 1
+        self.right_bound_idx = N_grid - 1 + 1
+        self.top_bound_idx = 0 + 1
+        self.bot_bound_idx = N_grid - 1 + 1
 
         self.MAXIMUM_GRAINS = MAXIMUM_GRAINS
         self.avalanche_size = 0
@@ -139,8 +139,9 @@ class Sandpile():
 
         print('POST TOPPLE')
         self.print_grid()
+        # print(self.grid)
 
-        # input()
+        input()
 
     def increment_neighbors(self, x_coord, y_coord):
 
@@ -156,6 +157,10 @@ class Sandpile():
         if (y_coord + 1) <= self.bot_bound_idx:
             self.grid[x_coord, y_coord + 1] += 1
 
+    #returns the part of the grid that contains the sand
+    def get_sandpile(self,):
+        return self.grid[1:self.N_grid+1, 1:self.N_grid+1]
+
     def print_grid(self,):
-        print(self.grid[self.N_grid:self.N_grid*2, self.N_grid:self.N_grid*2])
+        print(self.get_sandpile())
 
