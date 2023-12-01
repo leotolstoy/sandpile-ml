@@ -45,7 +45,7 @@ class Sandpile():
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
 
         # run the agent
-        if self.agent:
+        if self.agent and self.agent.is_in_game:
             move = self.agent.choose_move()
             self.move_agent_in_direction(move, self.agent)
 
@@ -66,39 +66,55 @@ class Sandpile():
             self.avalanche_size += 1
             self.was_avalanching_before = True
 
-        # get agent rewards
+        # get agent rewards based on position
+
+    def move_agent_to_point(self,new_x_pos, new_y_pos):
+        self.agent.update_agent_pos(new_x_pos, new_y_pos)
             
-
-    def move_agent_in_direction(self, move, agent):
-
+    def get_new_pos_from_direction(self, move, x_pos, y_pos):
         if move == Directions.LEFT:
-            new_x_pos = agent.x_pos - 1
-            new_y_pos = agent.y_pos
+            new_x_pos = x_pos - 1
+            new_y_pos = y_pos
 
         elif move == Directions.RIGHT:
-            new_x_pos = agent.x_pos + 1
-            new_y_pos = agent.y_pos
+            new_x_pos = x_pos + 1
+            new_y_pos = y_pos
 
         elif move == Directions.UP:
-            new_x_pos = agent.x_pos
-            new_y_pos = agent.y_pos - 1
+            new_x_pos = x_pos
+            new_y_pos = y_pos - 1
 
         elif move == Directions.DOWN:
-            new_x_pos = agent.x_pos
-            new_y_pos = agent.y_pos + 1
+            new_x_pos = x_pos
+            new_y_pos = y_pos + 1
 
         elif move == Directions.STAY:
-            new_x_pos = agent.x_pos
-            new_y_pos = agent.y_pos
+            new_x_pos = x_pos
+            new_y_pos = y_pos
 
-        agent.update_agent_pos(new_x_pos, new_y_pos)
+        return new_x_pos, new_y_pos
+
+
+    def move_agent_in_direction(self, direction, agent):
+        
+        new_x_pos, new_y_pos = self.get_new_pos_from_direction(direction, agent.x_pos, agent.y_pos)
+        self.move_agent_to_point(new_x_pos, new_y_pos)
 
     # def get_neighbor_idxs(x_pos, y_pos):
 
+    def choose_random_neighbor_from_point(self, x_pos, y_pos):
 
+        possible_moves = [Directions.LEFT, Directions.RIGHT, Directions.UP, Directions.DOWN]
+        direction = random.choice(possible_moves)
+        new_x_pos, new_y_pos = self.get_new_pos_from_direction(direction, x_pos, y_pos)
 
-    def avalanche_agent(self,):
-        return -1
+        return new_x_pos, new_y_pos
+
+    def move_agent_random_from_point(self,):
+        x_pos = self.agent.x_pos
+        y_pos = self.agent.y_pos
+        new_agent_x_pos, new_agent_y_pos = self.choose_random_neighbor_from_point(x_pos, y_pos)
+        self.move_agent_to_point(new_agent_x_pos, new_agent_y_pos)
         
 
     def drop_sandgrain(self,):
@@ -135,7 +151,7 @@ class Sandpile():
         # print(x_coord_unstable, y_coord_unstable)
 
         # check if agent is at the coordinate
-        if self.agent:
+        if self.agent and self.agent.is_in_game:
             agent_is_at_unstable_pos = self.agent.agent_is_at_pos(x_coord_unstable, y_coord_unstable)
 
         # topple the grid at this coordinate
@@ -144,7 +160,10 @@ class Sandpile():
         # increment neighboring vertex counts
         self.increment_neighbors(x_coord_unstable, y_coord_unstable)
 
-        # move the agent to one of the neighbors
+        # move the agent to one of the neighbors if the agent was at the unstable coordinate
+        if self.agent and self.agent.is_in_game and agent_is_at_unstable_pos:
+            self.move_agent_random_from_point()
+
 
         print('POST TOPPLE')
         self.print_grid()

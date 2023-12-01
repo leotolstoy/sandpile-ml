@@ -11,7 +11,7 @@ class Agent():
         self.x_pos = x_pos_init
         self.y_pos = y_pos_init
         self.moves = []
-
+        self.is_in_game = True
 
 
     def step(self):
@@ -55,4 +55,7 @@ class RandomAgent(Agent):
 
     def agent_is_at_pos(self, x_pos, y_pos):
         return (self.x_pos == x_pos and self.y_pos == y_pos)
+    
+    def remove_agent_from_game(self,):
+        self.is_in_game = False
 
