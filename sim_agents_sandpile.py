@@ -8,8 +8,8 @@ from time import time
 from util import Directions
 from sandpile import Sandpile
 
-DO_ANIM = False
-N_grid = 10 #number of cells per side
+DO_ANIM = True
+N_grid = 5 #number of cells per side
 # N_tick_step = 5
 N_tick_step = 1
 
@@ -19,18 +19,25 @@ frames = N_runs
 I = 0
 fig = plt.figure()
 
+#these bounds show the sandpile plus one square of void around it
+LIM_MIN = N_grid - 1 - 0.5
+LIM_MAX = 2*N_grid-0.5 + 1
+
+# LIM_MIN = 0
+# LIM_MAX = 3*N_grid-0.5
+
 
 axs = fig.add_subplot(111, aspect='equal', autoscale_on=False,
-                     xlim=(0, N_grid-0.5), ylim=(0, N_grid-0.5))
+                     xlim=(LIM_MIN, LIM_MAX), ylim=(LIM_MIN, LIM_MAX))
 # axs.grid()
-# axs.grid(which='major', axis='both', linestyle='-', color='k', linewidth=2)
-axs.set_xticks(np.arange(-.5, N_grid, N_tick_step))
-axs.set_yticks(np.arange(-.5, N_grid, N_tick_step))
+axs.grid(which='major', axis='both', linestyle='-', color='k', linewidth=1)
+axs.set_xticks(np.arange(-.5 + N_grid, N_grid*2, N_tick_step))
+axs.set_yticks(np.arange(-.5 + N_grid, N_grid*2, N_tick_step))
 # axs.set_xticks([])
 # axs.set_yticks([])
 
-axs.xaxis.set_tick_params(labelbottom=False)
-axs.yaxis.set_tick_params(labelleft=False)
+# axs.xaxis.set_tick_params(labelbottom=False)
+# axs.yaxis.set_tick_params(labelleft=False)
 
 # https://stackoverflow.com/questions/43971138/python-plotting-colored-grid-based-on-values
 # https://stackoverflow.com/questions/7229971/2d-grid-data-visualization-in-python
