@@ -1,9 +1,10 @@
 import numpy as np
 import random
+from util import Directions
 
 class Sandpile():
 
-    def __init__(self,N_grid=10, MAXIMUM_GRAINS=4):
+    def __init__(self,N_grid=10, MAXIMUM_GRAINS=4, agent=None):
         self.grid = np.zeros((N_grid, N_grid))
         self.N_grid = N_grid
         self.left_bound_idx = 0
@@ -16,12 +17,20 @@ class Sandpile():
         self.is_avalanching = False
         self.was_avalanching_before = False
         self.avalanche_sizes = []
+        self.agent = agent
 
     def step(self,):
         # determine if we should avalanche, based on if any of the grid values
         # are greater than the alloweable maximum grain number
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
 
+        # run the agent
+        if self.agent:
+            move = self.agent.choose_move()
+            self.move_agent_in_direction(move, self.agent)
+
+
+        # update the sandpile environment
         if not self.is_avalanching:
             self.drop_sandgrain()
             
@@ -36,9 +45,41 @@ class Sandpile():
             self.avalanche()
             self.avalanche_size += 1
             self.was_avalanching_before = True
+
+        # get agent rewards
             
 
+    def move_agent_in_direction(self, move, agent):
 
+        if move == Directions.LEFT:
+            new_x_pos = agent.x_pos - 1
+            new_y_pos = agent.y_pos
+
+        elif move == Directions.RIGHT:
+            new_x_pos = agent.x_pos + 1
+            new_y_pos = agent.y_pos
+
+        elif move == Directions.UP:
+            new_x_pos = agent.x_pos
+            new_y_pos = agent.y_pos - 1
+
+        elif move == Directions.DOWN:
+            new_x_pos = agent.x_pos
+            new_y_pos = agent.y_pos + 1
+
+        elif move == Directions.STAY:
+            new_x_pos = agent.x_pos
+            new_y_pos = agent.y_pos
+
+        agent.update_agent_pos(new_x_pos, new_y_pos)
+
+    # def get_neighbor_idxs(x_pos, y_pos):
+
+
+
+    def avalanche_agent(self,):
+        return -1
+        
 
     def drop_sandgrain(self,):
         # drop a grain on a uniformly selected location
@@ -73,11 +114,17 @@ class Sandpile():
 
         # print(x_coord_unstable, y_coord_unstable)
 
+        # check if agent is at the coordinate
+        if self.agent:
+            agent_is_at_unstable_pos = self.agent.agent_is_at_pos(x_coord_unstable, y_coord_unstable)
+
         # topple the grid at this coordinate
         self.grid[x_coord_unstable, y_coord_unstable] -= self.MAXIMUM_GRAINS
 
         # increment neighboring vertex counts
         self.increment_neighbors(x_coord_unstable, y_coord_unstable)
+
+        # move the agent to one of the neighbors
 
         print('POST TOPPLE')
         print(self.grid)

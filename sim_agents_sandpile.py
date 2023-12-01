@@ -5,6 +5,7 @@ from matplotlib import animation
 import matplotlib as mpl
 from time import time
 
+from util import Directions
 from sandpile import Sandpile
 
 DO_ANIM = False
