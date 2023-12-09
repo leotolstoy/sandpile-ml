@@ -105,6 +105,12 @@ class MaxAgent(Agent):
         
         possible_moves = self.get_possible_moves(sandpile)
 
+        # shuffle possible moves, this is done because in the event of 
+        # an eventual tie between the maximums, numpy only returns the 
+        # first index, so we want to avoid bias based on which Direction
+        # is listed first
+        random.shuffle(possible_moves)
+
         max_reward = 0
         moves_with_highest_reward = []
 
@@ -112,29 +118,16 @@ class MaxAgent(Agent):
         # add all moves that have a maximum reward
         prewards = []
         for pmove in possible_moves:
-            new_x_pos, new_y_pos = sandpile.get_new_pos_from_direction(pmove, self.x_pos, self.y_pos)
+            new_x_pos, new_y_pos = get_new_pos_from_direction(pmove, self.x_pos, self.y_pos)
             preward = sandpile.grid[new_y_pos, new_x_pos]
-            # print('preward')
-            # print(preward)
             prewards.append(preward)
-            # if preward >= max_reward:
-            #     print('moves_with_highest_reward')
-            #     print(moves_with_highest_reward)
-            #     max_reward = preward
-            #     moves_with_highest_reward.append(pmove)
 
 
         print('prewards')
         print(prewards)
         max_reward_idx = np.argmax(prewards)
-        print('max_reward_idx')
-        print(max_reward_idx)
+        # print('max_reward_idx')
+        # print(max_reward_idx)
         move = possible_moves[max_reward_idx]
-
-        #choose randomly from the moves that have maximum reward
-        # typically moves_with_highest_reward will only have a single element
-        # print('moves_with_highest_reward')
-        # print(moves_with_highest_reward)
-        # move = random.choice(moves_with_highest_reward)
 
         return move

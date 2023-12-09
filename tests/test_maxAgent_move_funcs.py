@@ -23,13 +23,14 @@ class TestMaxAgentMoveFuncsFromMiddle(unittest.TestCase):
         
         X_POS_INIT = self.N_grid//2
         Y_POS_INIT = self.N_grid//2
-        EXPECTED_X_POS = X_POS_INIT - 1
-        EXPECTED_Y_POS = Y_POS_INIT
         
         agent, sandpile = self.setup_agent_grid(X_POS_INIT, Y_POS_INIT, self.N_grid)
 
         # set up grid to have maximum at left of agent
+        EXPECTED_X_POS = X_POS_INIT - 1
+        EXPECTED_Y_POS = Y_POS_INIT
         sandpile.grid[EXPECTED_Y_POS, EXPECTED_X_POS] = 3
+        EXPECTED_DIRECTION = Directions.LEFT
 
         sandpile.print_grid_and_agent_pos(agent)
         print(agent.get_agent_pos())
@@ -38,25 +39,25 @@ class TestMaxAgentMoveFuncsFromMiddle(unittest.TestCase):
         direction = agent.choose_move(sandpile)
         print(direction)
 
-        sandpile.move_agent_in_direction(direction, agent)
+        agent.move_agent_in_direction(direction)
         sandpile.print_grid_and_agent_pos(agent)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
-        self.assertEqual(direction, Directions.LEFT)
+        self.assertEqual(direction, EXPECTED_DIRECTION)
 
     def test_maxAgent_chooses_single_max_up(self,):
 
         
         X_POS_INIT = self.N_grid//2
         Y_POS_INIT = self.N_grid//2
-        EXPECTED_X_POS = X_POS_INIT
-        EXPECTED_Y_POS = Y_POS_INIT - 1
         
         agent, sandpile = self.setup_agent_grid(X_POS_INIT, Y_POS_INIT, self.N_grid)
 
         # set up grid to have maximum above agent
+        EXPECTED_X_POS = X_POS_INIT
+        EXPECTED_Y_POS = Y_POS_INIT - 1
         sandpile.grid[EXPECTED_Y_POS, EXPECTED_X_POS] = 3
-
+        EXPECTED_DIRECTION = Directions.UP
         sandpile.print_grid_and_agent_pos(agent)
         print(agent.get_agent_pos())
 
@@ -64,25 +65,27 @@ class TestMaxAgentMoveFuncsFromMiddle(unittest.TestCase):
         direction = agent.choose_move(sandpile)
         print(direction)
 
-        sandpile.move_agent_in_direction(direction, agent)
+        agent.move_agent_in_direction(direction)
         sandpile.print_grid_and_agent_pos(agent)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
-        self.assertEqual(direction, Directions.UP)
+        self.assertEqual(direction, EXPECTED_DIRECTION)
 
     def test_maxAgent_chooses_single_max_stay(self,):
 
         
         X_POS_INIT = self.N_grid//2
         Y_POS_INIT = self.N_grid//2
-        EXPECTED_X_POS = X_POS_INIT
-        EXPECTED_Y_POS = Y_POS_INIT
+        
         
         agent, sandpile = self.setup_agent_grid(X_POS_INIT, Y_POS_INIT, self.N_grid)
 
-        # set up grid to have maximum above agent
+        # set up grid to have maximum at agent pos
+        EXPECTED_X_POS = X_POS_INIT
+        EXPECTED_Y_POS = Y_POS_INIT
         sandpile.grid[EXPECTED_Y_POS, EXPECTED_X_POS] = 3
-
+        EXPECTED_DIRECTION = Directions.STAY
+        
         sandpile.print_grid_and_agent_pos(agent)
         print(agent.get_agent_pos())
 
@@ -90,24 +93,27 @@ class TestMaxAgentMoveFuncsFromMiddle(unittest.TestCase):
         direction = agent.choose_move(sandpile)
         print(direction)
 
-        sandpile.move_agent_in_direction(direction, agent)
+        agent.move_agent_in_direction(direction)
         sandpile.print_grid_and_agent_pos(agent)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
-        self.assertEqual(direction, Directions.STAY)
+        self.assertEqual(direction, EXPECTED_DIRECTION)
 
     def test_maxAgent_chooses_from_two_max(self,):
 
         
         X_POS_INIT = self.N_grid//2
         Y_POS_INIT = self.N_grid//2
-        EXPECTED_X_POS = X_POS_INIT
-        EXPECTED_Y_POS = Y_POS_INIT - 1
+        
         
         agent, sandpile = self.setup_agent_grid(X_POS_INIT, Y_POS_INIT, self.N_grid)
 
-        # set up grid to have maximum above agent
-        sandpile.grid[EXPECTED_Y_POS, EXPECTED_X_POS] = 3
+        # set up two maxes, one above agent, one to thr right of agent
+        EXPECTED_X_POS1, EXPECTED_Y_POS1 = X_POS_INIT, Y_POS_INIT - 1
+        EXPECTED_X_POS2, EXPECTED_Y_POS2 = X_POS_INIT + 1, Y_POS_INIT
+        EXPECTED_DIRECTIONS = [Directions.UP, Directions.RIGHT]
+        sandpile.grid[EXPECTED_Y_POS1, EXPECTED_X_POS1] = 3
+        sandpile.grid[EXPECTED_Y_POS2, EXPECTED_X_POS2] = 3
 
         sandpile.print_grid_and_agent_pos(agent)
         print(agent.get_agent_pos())
@@ -116,17 +122,18 @@ class TestMaxAgentMoveFuncsFromMiddle(unittest.TestCase):
         direction = agent.choose_move(sandpile)
         print(direction)
 
-        sandpile.move_agent_in_direction(direction, agent)
+        agent.move_agent_in_direction(direction)
         sandpile.print_grid_and_agent_pos(agent)
         print(agent.get_agent_pos())
-        self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
-        self.assertEqual(direction, Directions.UP)
+
+        self.assertIn(direction, EXPECTED_DIRECTIONS)
 
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(TestMaxAgentMoveFuncsFromMiddle('test_maxAgent_chooses_single_max_left'))
     suite.addTest(TestMaxAgentMoveFuncsFromMiddle('test_maxAgent_chooses_single_max_up'))
     suite.addTest(TestMaxAgentMoveFuncsFromMiddle('test_maxAgent_chooses_single_max_stay'))
+    suite.addTest(TestMaxAgentMoveFuncsFromMiddle('test_maxAgent_chooses_from_two_max'))
     return suite
 
 

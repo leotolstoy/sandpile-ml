@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from util import Directions, get_new_pos_from_direction, choose_random_neighbor_from_point
+from util import Directions
 
 class Sandpile():
 
@@ -105,11 +105,6 @@ class Sandpile():
 
         # input()
         return game_is_running
-
-    def move_agent_to_point(self, agent, new_x_pos, new_y_pos):
-        agent.update_agent_pos(new_x_pos, new_y_pos)
-            
-    
     
     
     def check_agent_is_in_grid(self, agent):
