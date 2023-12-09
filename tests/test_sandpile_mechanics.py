@@ -200,6 +200,61 @@ class TestSandpileMechanics(unittest.TestCase):
         sandpile.print_grid()
         self.assertTrue(arraysEqual)
 
+    def test_two_avalanches_recorded_properly(self,):
+
+        # set up sandpile at avalanche conditions
+        max_grains = 4
+        sandpile = self.setup_sandpile_grid(self.N_grid, max_grains=max_grains)
+
+        # define sandpile scenario
+        # [[0. 0. 0. 0. 0.]
+        # [0. 0. 0. 0. 0.]
+        # [0. 0. 4. 3. 0.]
+        # [0. 0. 0. 0. 0.]
+        # [0. 0. 0. 0. 0.]]
+
+        sandpile.grid[2,2] = max_grains
+        sandpile.grid[2,3] = max_grains - 1
+        print('sandpile before')
+        sandpile.print_grid()
+
+        # define expected grid
+        # [[0. 0. 0. 0. 0.]
+        # [0. 0. 1. 1. 0.]
+        # [0. 1. 1. 0. 1.]
+        # [0. 0. 1. 1. 0.]
+        # [0. 0. 0. 0. 0.]]
+
+        EXPECTED_GRID = np.zeros((self.N_grid,self.N_grid))
+        EXPECTED_GRID[1,2] = 1
+        EXPECTED_GRID[1,3] = 1
+        EXPECTED_GRID[2,1] = 1
+        EXPECTED_GRID[2,2] = 1
+        EXPECTED_GRID[2,4] = 1
+        EXPECTED_GRID[3,2] = 1
+        EXPECTED_GRID[3,3] = 1
+        EXPECTED_AVALANCHE_SIZE = 2
+
+        print('expected grid')
+        print(EXPECTED_GRID)
+
+        #step twice, should avalanche twice
+        sandpile.step()
+        self.assertTrue(sandpile.is_avalanching)
+        sandpile.step()
+        self.assertTrue(sandpile.is_avalanching)
+
+        #step again, which should stop avalanching
+        print('NEXT STEP')
+        sandpile.step()
+        self.assertFalse(sandpile.is_avalanching)
+
+        arraysEqual = np.array_equal(EXPECTED_GRID, sandpile.get_sandpile())
+        sandpile.print_grid()
+        self.assertTrue(arraysEqual)
+        
+        self.assertEqual(EXPECTED_AVALANCHE_SIZE, sandpile.avalanche_sizes[0])
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(TestSandpileMechanics('test_sandgrain_drop_at_location'))
@@ -207,6 +262,7 @@ def suite():
     suite.addTest(TestSandpileMechanics('test_avalanche_size_recorded_properly'))
     suite.addTest(TestSandpileMechanics('test_avalanche_at_side_loses_grains'))
     suite.addTest(TestSandpileMechanics('test_avalanche_at_corner_loses_grains'))
+    suite.addTest(TestSandpileMechanics('test_two_avalanches_recorded_properly'))
     return suite
 
 
