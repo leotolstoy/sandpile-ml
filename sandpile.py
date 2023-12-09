@@ -34,7 +34,10 @@ class Sandpile():
     def step(self,):
         #check that the game is still running
         iterations_not_exceeded = self.iteration < self.MAX_STEPS
-        at_least_one_agent_in_game = False
+
+        # establish that at least one agent is in the game, or if no agents were initialized
+        # set this to true so that we can keep looping
+        at_least_one_agent_in_game = False or len(self.agents) == 0
         for agent in self.agents:
             at_least_one_agent_in_game = at_least_one_agent_in_game or agent.is_in_game()
 
@@ -46,20 +49,18 @@ class Sandpile():
         # determine if we should avalanche, based on if any of the grid values
         # are greater than the alloweable maximum grain number
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
-
         
         # update the sandpile environment
         if not self.is_avalanching:
             # print('NOT AVALANCHING')
             if self.DROP_SAND:
-                self.drop_sandgrain()
+                self.drop_sandgrain_randomly()
 
             # run the agents
             for agent in self.agents:
                 if agent.is_in_game():
                     
                     print('agent_pos (i,j) (Y, X): ', agent.get_agent_pos())
-
                     print('Moving agent')
                     # have the agent choose a direction to move in
                     direction = agent.choose_move(self)
@@ -67,8 +68,6 @@ class Sandpile():
 
                     print('agent_pos after normal move (i,j) (Y, X): ', agent.get_agent_pos())
 
-                    
-            
             # handle state transition from avalanching to not avalanching
             # this records the avalanche size
             if self.was_avalanching_before:
@@ -77,14 +76,12 @@ class Sandpile():
                 self.avalanche_size = 0
                 print(self.avalanche_sizes)
 
-
-        else:
+        else: # if avalanching
             self.avalanche()
             self.avalanche_size += 1
             self.was_avalanching_before = True
 
         # get agent rewards based on position
-
         for agent in self.agents:
             # if the agent is still in the game 
             if agent.is_in_game():
@@ -114,7 +111,10 @@ class Sandpile():
 
         return in_x_pos and in_y_pos
 
-    def drop_sandgrain(self,):
+    def drop_sandgrain_at_pos(self, x_pos, y_pos):
+        self.grid[y_pos, x_pos] += 1
+
+    def drop_sandgrain_randomly(self,):
         # drop a grain on a uniformly selected location
         # select a random location
         x_coord_grain = random.randint(self.left_bound_idx, self.right_bound_idx)
@@ -124,7 +124,7 @@ class Sandpile():
         # print(y_coord_grain, x_coord_grain)
 
         #increment the count at that location
-        self.grid[y_coord_grain, x_coord_grain] += 1
+        self.drop_sandgrain_at_pos(x_coord_grain, y_coord_grain)
         # print(self.grid)
 
     def avalanche(self,):
