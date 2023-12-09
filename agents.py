@@ -39,16 +39,9 @@ class Agent():
         self.cumulative_rewards = np.cumsum(np.array(self.rewards))
         self.cumulative_score = np.sum(self.rewards)
 
-
-
-class RandomAgent(Agent):
-
-    def __init__(self, x_pos_init=0, y_pos_init=0):
-        super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
-
-
-    def choose_move(self, sandpile):
-
+    # get possible moves: the agent will never choose to fall off
+    # the edge of the board
+    def get_possible_moves(self, sandpile):
         possible_moves = [Directions.STAY, Directions.LEFT, Directions.RIGHT, Directions.UP, Directions.DOWN]
 
         if self.x_pos <= sandpile.left_bound_idx:
@@ -63,6 +56,20 @@ class RandomAgent(Agent):
         if self.y_pos >= sandpile.bot_bound_idx:
             possible_moves.remove(Directions.DOWN)
 
+        return possible_moves
+
+
+
+class RandomAgent(Agent):
+
+    def __init__(self, x_pos_init=0, y_pos_init=0):
+        super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
+
+
+    def choose_move(self, sandpile):
+
+        possible_moves = self.get_possible_moves(sandpile)
+
         print('possible_moves')
         print(possible_moves)
         move = random.choice(possible_moves)
@@ -73,4 +80,47 @@ class RandomAgent(Agent):
         return move
     
     
+class MaxAgent(Agent):
+    # This agent chooses to move to the nearest square (given the four cardinal directions
+    # plus staying in place) that has the highest score
 
+    def __init__(self, x_pos_init=0, y_pos_init=0):
+        super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
+
+    def choose_move(self, sandpile):
+        
+        possible_moves = self.get_possible_moves(sandpile)
+
+        max_reward = 0
+        moves_with_highest_reward = []
+
+        # evaluate possible moves based on maximum reward
+        # add all moves that have a maximum reward
+        prewards = []
+        for pmove in possible_moves:
+            new_x_pos, new_y_pos = sandpile.get_new_pos_from_direction(pmove, self.x_pos, self.y_pos)
+            preward = sandpile.grid[new_y_pos, new_x_pos]
+            # print('preward')
+            # print(preward)
+            prewards.append(preward)
+            # if preward >= max_reward:
+            #     print('moves_with_highest_reward')
+            #     print(moves_with_highest_reward)
+            #     max_reward = preward
+            #     moves_with_highest_reward.append(pmove)
+
+
+        print('prewards')
+        print(prewards)
+        max_reward_idx = np.argmax(prewards)
+        print('max_reward_idx')
+        print(max_reward_idx)
+        move = possible_moves[max_reward_idx]
+
+        #choose randomly from the moves that have maximum reward
+        # typically moves_with_highest_reward will only have a single element
+        # print('moves_with_highest_reward')
+        # print(moves_with_highest_reward)
+        # move = random.choice(moves_with_highest_reward)
+
+        return move

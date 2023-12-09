@@ -1,6 +1,6 @@
 import numpy as np
 import random
-from util import Directions
+from util import Directions, get_new_pos_from_direction, choose_random_neighbor_from_point
 
 class Sandpile():
 
@@ -109,48 +109,17 @@ class Sandpile():
     def move_agent_to_point(self, agent, new_x_pos, new_y_pos):
         agent.update_agent_pos(new_x_pos, new_y_pos)
             
-    def get_new_pos_from_direction(self, direction, x_pos, y_pos):
-        if direction == Directions.LEFT:
-            new_x_pos = x_pos - 1
-            new_y_pos = y_pos
-
-        elif direction == Directions.RIGHT:
-            new_x_pos = x_pos + 1
-            new_y_pos = y_pos
-
-        elif direction == Directions.UP:
-            new_x_pos = x_pos
-            new_y_pos = y_pos - 1
-
-        elif direction == Directions.DOWN:
-            new_x_pos = x_pos
-            new_y_pos = y_pos + 1
-
-        elif direction == Directions.STAY:
-            new_x_pos = x_pos
-            new_y_pos = y_pos
-
-        return new_x_pos, new_y_pos
-
-
+    
     def move_agent_in_direction(self, direction, agent):
         
-        new_x_pos, new_y_pos = self.get_new_pos_from_direction(direction, agent.x_pos, agent.y_pos)
+        new_x_pos, new_y_pos = get_new_pos_from_direction(direction, agent.x_pos, agent.y_pos)
         self.move_agent_to_point(agent, new_x_pos, new_y_pos)
-
-
-    def choose_random_neighbor_from_point(self, x_pos, y_pos):
-
-        possible_moves = [Directions.LEFT, Directions.RIGHT, Directions.UP, Directions.DOWN]
-        direction = random.choice(possible_moves)
-        new_x_pos, new_y_pos = self.get_new_pos_from_direction(direction, x_pos, y_pos)
-
-        return new_x_pos, new_y_pos
+    
 
     def move_agent_random_from_point(self, agent):
         x_pos = agent.x_pos
         y_pos = agent.y_pos
-        new_agent_x_pos, new_agent_y_pos = self.choose_random_neighbor_from_point(x_pos, y_pos)
+        new_agent_x_pos, new_agent_y_pos = choose_random_neighbor_from_point(x_pos, y_pos)
         self.move_agent_to_point(agent, new_agent_x_pos, new_agent_y_pos)
     
     def check_agent_is_in_grid(self, agent):
