@@ -1,7 +1,7 @@
 import numpy as np
 import random
 from time import time
-from util import Directions
+from util import Directions, get_new_pos_from_direction, choose_random_neighbor_from_point
 
 
 class Agent():
@@ -23,7 +23,7 @@ class Agent():
     def get_agent_pos(self,):
         return self.y_pos, self.x_pos
 
-    def update_agent_pos(self, new_x_pos, new_y_pos):
+    def move_agent_to_point(self, new_x_pos, new_y_pos):
         self.x_pos = new_x_pos
         self.y_pos = new_y_pos
 
@@ -32,6 +32,19 @@ class Agent():
     
     def remove_agent_from_game(self,):
         self.is_in_game = False
+    
+    def move_agent_in_direction(self, direction):
+        
+        new_x_pos, new_y_pos = get_new_pos_from_direction(direction, self.x_pos, self.y_pos)
+        self.move_agent_to_point(new_x_pos, new_y_pos)
+    
+
+    def move_agent_random_from_point(self, ):
+        x_pos = self.x_pos
+        y_pos = self.y_pos
+        new_agent_x_pos, new_agent_y_pos = choose_random_neighbor_from_point(x_pos, y_pos)
+        self.move_agent_to_point(new_agent_x_pos, new_agent_y_pos)
+
     
     # add reward to list of rewards
     def get_reward(self, reward):
@@ -58,6 +71,7 @@ class Agent():
 
         return possible_moves
 
+    
 
 
 class RandomAgent(Agent):

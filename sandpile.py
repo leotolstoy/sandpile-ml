@@ -63,7 +63,7 @@ class Sandpile():
                     print('Moving agent')
                     # have the agent choose a direction to move in
                     direction = agent.choose_move(self)
-                    self.move_agent_in_direction(direction, agent)
+                    agent.move_agent_in_direction(direction)
 
                     print('agent_pos after normal move (i,j) (Y, X): ', agent.get_agent_pos())
 
@@ -110,17 +110,7 @@ class Sandpile():
         agent.update_agent_pos(new_x_pos, new_y_pos)
             
     
-    def move_agent_in_direction(self, direction, agent):
-        
-        new_x_pos, new_y_pos = get_new_pos_from_direction(direction, agent.x_pos, agent.y_pos)
-        self.move_agent_to_point(agent, new_x_pos, new_y_pos)
     
-
-    def move_agent_random_from_point(self, agent):
-        x_pos = agent.x_pos
-        y_pos = agent.y_pos
-        new_agent_x_pos, new_agent_y_pos = choose_random_neighbor_from_point(x_pos, y_pos)
-        self.move_agent_to_point(agent, new_agent_x_pos, new_agent_y_pos)
     
     def check_agent_is_in_grid(self, agent):
         in_x_pos = agent.x_pos >= self.left_bound_idx and agent.x_pos <= self.right_bound_idx
@@ -186,7 +176,7 @@ class Sandpile():
             if agent.is_in_game and agent_is_at_unstable_pos:
                 
                 print('moving agent due to avalanche')
-                self.move_agent_random_from_point(agent)
+                agent.move_agent_random_from_point()
                 
                 print('agent pos after avalanche (i,j) (Y, X)', agent.get_agent_pos())
                 self.print_agent_pos_on_grid(agent)

@@ -30,7 +30,7 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
         print(agent.get_agent_pos())
         direction = Directions.LEFT
 
-        sandpile.move_agent_in_direction(direction, agent)
+        agent.move_agent_in_direction(direction)
         sandpile.print_agent_pos_on_grid(agent)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
@@ -46,7 +46,7 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
         print(agent.get_agent_pos())
         direction = Directions.RIGHT
 
-        sandpile.move_agent_in_direction(direction, agent)
+        agent.move_agent_in_direction(direction)
         sandpile.print_agent_pos_on_grid(agent)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
@@ -62,7 +62,7 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
         print(agent.get_agent_pos())
         direction = Directions.UP
 
-        sandpile.move_agent_in_direction(direction, agent)
+        agent.move_agent_in_direction(direction)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
@@ -77,7 +77,7 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
         print(agent.get_agent_pos())
         direction = Directions.DOWN
 
-        sandpile.move_agent_in_direction(direction, agent)
+        agent.move_agent_in_direction(direction)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
@@ -108,7 +108,7 @@ class TestAgentMoveFuncsFromLeft(unittest.TestCase):
         print(agent.get_agent_pos())
         direction = Directions.LEFT
 
-        sandpile.move_agent_in_direction(direction, agent)
+        agent.move_agent_in_direction(direction)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
@@ -140,7 +140,7 @@ class TestAgentMoveFuncsFromRight(unittest.TestCase):
         print(agent.get_agent_pos())
         direction = Directions.RIGHT
 
-        sandpile.move_agent_in_direction(direction, agent)
+        agent.move_agent_in_direction(direction)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
@@ -172,7 +172,7 @@ class TestAgentMoveFuncsFromTop(unittest.TestCase):
         print(agent.get_agent_pos())
         direction = Directions.UP
 
-        sandpile.move_agent_in_direction(direction, agent)
+        agent.move_agent_in_direction(direction)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
@@ -203,7 +203,7 @@ class TestAgentMoveFuncsFromBot(unittest.TestCase):
         print(agent.get_agent_pos())
         direction = Directions.DOWN
 
-        sandpile.move_agent_in_direction(direction, agent)
+        agent.move_agent_in_direction(direction)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
@@ -238,12 +238,12 @@ class TestMultipleAgentMoveFuncs(unittest.TestCase):
         direction2 = Directions.RIGHT
 
         print('Moving Agent 1')
-        sandpile.move_agent_in_direction(direction1, agent1)
+        agent1.move_agent_in_direction(direction1)
         sandpile.print_agent_pos_on_grid(agent1)
         print(agent1.get_agent_pos())
 
         print('Moving Agent 2')
-        sandpile.move_agent_in_direction(direction2, agent2)
+        agent2.move_agent_in_direction(direction2)
         sandpile.print_agent_pos_on_grid(agent2)
         print(agent2.get_agent_pos())
 
