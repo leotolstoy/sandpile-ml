@@ -6,18 +6,6 @@ class Sandpile():
 
     def __init__(self,N_grid=2, MAXIMUM_GRAINS=4, agent=None, DROP_SAND=True, MAX_STEPS=1000):
 
-        # set up the total grid, which is the sandpile plus empty void around it
-
-        # X = N_grid x N_grid sandpile which gets sand dropped on it
-        # O =  void which has a massively negative score
-        # grid = 
-        # O O O 
-        # O X O
-        # O O O
-        # self.grid = np.ones((N_grid + 2, N_grid + 2)) * -1e3
-        # self.grid[1:N_grid+1, 1:N_grid+1] = np.zeros((N_grid, N_grid))
-
-
         self.grid = np.zeros((N_grid, N_grid))
 
         self.N_grid = N_grid
@@ -110,12 +98,8 @@ class Sandpile():
                 self.agent.get_reward(self.REWARD_OFF_GRID)
 
             # print('rewards: ', self.agent.rewards)
-            print('cumulative_score: ', self.agent.cumulative_score)
+            # print('cumulative_score: ', self.agent.cumulative_score)
             # print('cumulative_rewards:', self.agent.cumulative_rewards)
-
-        # # check if agent is still in game
-        # if self.agent and not self.check_agent_is_in_grid(self.agent):
-        #     game_is_running = False
 
         # input()
         return game_is_running
