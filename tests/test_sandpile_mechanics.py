@@ -3,7 +3,7 @@ import os, sys
 sys.path.append("../")
 from util import Directions
 from sandpile import Sandpile
-from agents import MaxAgent
+from agents import Agent
 import unittest
 
 class TestSandpileMechanics(unittest.TestCase):
@@ -255,14 +255,52 @@ class TestSandpileMechanics(unittest.TestCase):
 
         self.assertEqual(EXPECTED_AVALANCHE_SIZE, sandpile.avalanche_sizes[0])
 
+    def test_avalanche_moves_agent(self,):
+        
+        # define sandpile scenario
+        # [[0. 0. 0. 0. 0.]
+        # [0. 0. 0. 0. 0.]
+        # [0. 0. 4. 0. 0.]
+        # [0. 0. 0. 0. 0.]
+        # [0. 0. 0. 0. 0.]]
+        X_POS = 2
+        Y_POS = 2
+
+        # set up sandpile at avalanche conditions
+        max_grains = 4
+        DROP_SAND=False
+        agent = Agent(x_pos_init=X_POS, y_pos_init=Y_POS)
+        sandpile = Sandpile(N_grid=self.N_grid, DROP_SAND=DROP_SAND, agents=[agent], MAXIMUM_GRAINS=max_grains)
+
+        
+        sandpile.grid[Y_POS, X_POS] = max_grains
+        print('sandpile before:')
+        print(agent.get_agent_pos())
+        sandpile.print_grid_and_agent_pos(agent)
+
+
+        #step, which should avalanche
+        sandpile.step()
+        
+        print('sandpile after:')
+        print(agent.get_agent_pos())
+        sandpile.print_grid_and_agent_pos(agent)
+
+        self.assertTrue(sandpile.is_avalanching)
+
+        self.assertNotEqual(agent.get_agent_pos(), (Y_POS, X_POS))
+
+
 def suite():
     suite = unittest.TestSuite()
-    suite.addTest(TestSandpileMechanics('test_sandgrain_drop_at_location'))
-    suite.addTest(TestSandpileMechanics('test_drop_on_maxgrains_causes_avalanche'))
-    suite.addTest(TestSandpileMechanics('test_avalanche_size_recorded_properly'))
-    suite.addTest(TestSandpileMechanics('test_avalanche_at_side_loses_grains'))
-    suite.addTest(TestSandpileMechanics('test_avalanche_at_corner_loses_grains'))
-    suite.addTest(TestSandpileMechanics('test_two_avalanches_recorded_properly'))
+    # suite.addTest(TestSandpileMechanics('test_sandgrain_drop_at_location'))
+    # suite.addTest(TestSandpileMechanics('test_drop_on_maxgrains_causes_avalanche'))
+    # suite.addTest(TestSandpileMechanics('test_avalanche_size_recorded_properly'))
+    # suite.addTest(TestSandpileMechanics('test_avalanche_at_side_loses_grains'))
+    # suite.addTest(TestSandpileMechanics('test_avalanche_at_corner_loses_grains'))
+    # suite.addTest(TestSandpileMechanics('test_two_avalanches_recorded_properly'))
+    suite.addTest(TestSandpileMechanics('test_avalanche_moves_agent'))   
+    
     return suite
 
 

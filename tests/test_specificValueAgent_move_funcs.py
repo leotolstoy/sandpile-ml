@@ -70,8 +70,8 @@ class TestSSVAgentAgentMoveFuncsFromMiddle(unittest.TestCase):
         EXPECTED_X_POS1, EXPECTED_Y_POS1 = X_POS_INIT, Y_POS_INIT - 1
         EXPECTED_X_POS2, EXPECTED_Y_POS2 = X_POS_INIT - 1, Y_POS_INIT
         EXPECTED_DIRECTIONS = [Directions.UP, Directions.LEFT]
-        sandpile.grid[EXPECTED_Y_POS1, EXPECTED_X_POS1] = 3
-        sandpile.grid[EXPECTED_Y_POS2, EXPECTED_X_POS2] = 3
+        sandpile.grid[EXPECTED_Y_POS1, EXPECTED_X_POS1] = self.TARGET_VALUE
+        sandpile.grid[EXPECTED_Y_POS2, EXPECTED_X_POS2] = self.TARGET_VALUE
 
 
         sandpile.print_grid_and_agent_pos(agent)

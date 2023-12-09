@@ -98,7 +98,7 @@ class TestAgentMoveFuncsFromLeft(unittest.TestCase):
         sandpile = Sandpile(N_grid=N_grid, agents=[agent], DROP_SAND=DROP_SAND)
         return agent, sandpile
 
-    def test_move_agent_left_from_left_bound(self,):
+    def test_move_agent_left_from_left_bound_off_grid(self,):
         EXPECTED_X_POS = self.X_POS_INIT - 1
         EXPECTED_Y_POS = self.Y_POS_INIT
         
@@ -130,7 +130,7 @@ class TestAgentMoveFuncsFromRight(unittest.TestCase):
         sandpile = Sandpile(N_grid=N_grid, agents=[agent], DROP_SAND=DROP_SAND)
         return agent, sandpile
 
-    def test_move_agent_right_from_right_bound(self,):
+    def test_move_agent_right_from_right_bound_off_grid(self,):
         EXPECTED_X_POS = self.X_POS_INIT + 1
         EXPECTED_Y_POS = self.Y_POS_INIT
         
@@ -162,7 +162,7 @@ class TestAgentMoveFuncsFromTop(unittest.TestCase):
         sandpile = Sandpile(N_grid=N_grid, agents=[agent], DROP_SAND=DROP_SAND)
         return agent, sandpile
 
-    def test_move_agent_up_from_top_bound(self,):
+    def test_move_agent_up_from_top_bound_off_grid(self,):
         EXPECTED_X_POS = self.X_POS_INIT
         EXPECTED_Y_POS = self.Y_POS_INIT - 1
         
@@ -193,7 +193,7 @@ class TestAgentMoveFuncsFromBot(unittest.TestCase):
         sandpile = Sandpile(N_grid=N_grid, agents=[agent], DROP_SAND=DROP_SAND)
         return agent, sandpile
 
-    def test_move_agent_down_from_bot_bound(self,):
+    def test_move_agent_down_from_bot_bound_off_grid(self,):
         EXPECTED_X_POS = self.X_POS_INIT
         EXPECTED_Y_POS = self.Y_POS_INIT + 1
         
@@ -260,10 +260,10 @@ def suite():
     suite.addTest(TestAgentMoveFuncsFromMiddle('test_move_agent_right_from_middle'))
     suite.addTest(TestAgentMoveFuncsFromMiddle('test_move_agent_up_from_middle'))
     suite.addTest(TestAgentMoveFuncsFromMiddle('test_move_agent_down_from_middle'))
-    suite.addTest(TestAgentMoveFuncsFromLeft('test_move_agent_left_from_left_bound'))
-    suite.addTest(TestAgentMoveFuncsFromRight('test_move_agent_right_from_right_bound'))
-    suite.addTest(TestAgentMoveFuncsFromTop('test_move_agent_up_from_top_bound'))
-    suite.addTest(TestAgentMoveFuncsFromBot('test_move_agent_down_from_bot_bound'))
+    suite.addTest(TestAgentMoveFuncsFromLeft('test_move_agent_left_from_left_bound_off_grid'))
+    suite.addTest(TestAgentMoveFuncsFromRight('test_move_agent_right_from_right_bound_off_grid'))
+    suite.addTest(TestAgentMoveFuncsFromTop('test_move_agent_up_from_top_bound_off_grid'))
+    suite.addTest(TestAgentMoveFuncsFromBot('test_move_agent_down_from_bot_bound_off_grid'))
     suite.addTest(TestMultipleAgentMoveFuncs('test_move_multiple_agents'))
     return suite
 

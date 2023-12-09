@@ -7,7 +7,7 @@ from time import time
 
 from util import Directions
 from sandpile import Sandpile
-from agents import RandomAgent, MaxAgent
+from agents import RandomAgent, MaxAgent, SeekSpecificValueAgent
 
 DO_ANIM = not True
 N_grid = 5 #number of cells per side
@@ -56,9 +56,12 @@ norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
 X_POS_INIT = N_grid//2
 Y_POS_INIT = N_grid//2
+
+# initialize agents
 random_agent = RandomAgent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT)
 max_agent = MaxAgent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT)
-agents = [random_agent, max_agent]
+ssv_agent = SeekSpecificValueAgent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT,specific_value=1)
+agents = [random_agent, max_agent, ssv_agent]
 
 sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=N_runs)
 
@@ -97,16 +100,20 @@ else:
 
 print('cumulative random_agent score: ', random_agent.cumulative_score)
 print('cumulative max_agent score: ', max_agent.cumulative_score)
+print('cumulative ssv_agent score: ', ssv_agent.cumulative_score)
 
 fig_rewards, axs_rewards = plt.subplots(2,1)
 axs_rewards[0].plot(random_agent.rewards,color='r',marker='o',label='Random Agent')
 axs_rewards[0].plot(max_agent.rewards,color='b',marker='o',label='Max Agent')
+axs_rewards[0].plot(ssv_agent.rewards,color='g',marker='o',label='SSV Agent')
 axs_rewards[0].legend()
 axs_rewards[0].set_ylabel('Rewards')
 axs_rewards[0].set_ylim(bottom=-1, top = 5)
 
 axs_rewards[1].plot(random_agent.cumulative_rewards,color='r',marker='o')
 axs_rewards[1].plot(max_agent.cumulative_rewards,color='b',marker='o')
+axs_rewards[1].plot(ssv_agent.cumulative_rewards,color='g',marker='o',label='Max Agent')
+
 
 axs_rewards[1].set_ylabel('Cumulative Rewards')
 axs_rewards[1].set_ylim(bottom=-1)
