@@ -156,7 +156,8 @@ class Sandpile():
 
     def avalanche(self,):
         print('AVALANCHING')
-        self.print_grid()
+        if self.agent:
+            self.print_grid_and_agent_pos(self.agent)
         # find indices where avalanching/unstable
         # returns a Nx2 array of xy coordinates where N is the number of indices over the maximum
         avalanche_idxs = np.argwhere(self.grid >= self.MAXIMUM_GRAINS)
@@ -195,6 +196,8 @@ class Sandpile():
             self.move_agent_random_from_point(self.agent)
              
             print('agent pos after avalanche', self.agent.get_agent_pos())
+            if self.agent:
+                self.print_agent_pos_on_grid(self.agent)
             input()
         # input()
 
@@ -236,3 +239,20 @@ class Sandpile():
     def print_grid(self,):
         print(self.get_sandpile())
 
+    def get_agent_pos_on_grid(self, agent):
+        #generate a grid of zeros with a 1 at the agent pos
+        agent_grid = np.zeros((self.N_grid, self.N_grid))
+        y_pos, x_pos = agent.get_agent_pos()
+        if self.check_agent_is_in_grid(agent):
+            agent_grid[y_pos, x_pos] = 1
+        return agent_grid
+
+
+    def print_agent_pos_on_grid(self, agent):
+        agent_grid = self.get_agent_pos_on_grid(agent)
+        print(agent_grid)
+
+    def print_grid_and_agent_pos(self, agent):
+        agent_grid = self.get_agent_pos_on_grid(agent)
+        print(self.get_sandpile(),'\n\n' , agent_grid)
+        
