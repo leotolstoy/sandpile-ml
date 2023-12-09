@@ -280,6 +280,4 @@ class Sandpile():
         agent_grid = self.get_agent_pos_on_grid(agent)
         print(self.get_sandpile(),'\n\n' , agent_grid)
 
-    def add_agent(self, agent):
-        self.agents.append(agent) 
         

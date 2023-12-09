@@ -17,7 +17,8 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
     def setup_agent_grid(self, X_POS_INIT, Y_POS_INIT, N_grid):
         DROP_SAND=False
         agent = Agent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT)
-        sandpile = Sandpile(N_grid=N_grid, agent=agent, DROP_SAND=DROP_SAND)
+        sandpile = Sandpile(N_grid=N_grid, agents=[agent], DROP_SAND=DROP_SAND)
+        # sandpile.add_agent(agent)
         return agent, sandpile
 
     def test_move_agent_left_from_middle(self,):
@@ -26,14 +27,15 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
         
         agent, sandpile = self.setup_agent_grid(self.X_POS_INIT, self.Y_POS_INIT, self.N_grid)
 
-        sandpile.print_grid()
+        sandpile.print_agent_pos_on_grid(agent)
         print(agent.get_agent_pos())
         direction = Directions.LEFT
 
         sandpile.move_agent_in_direction(direction, agent)
+        sandpile.print_agent_pos_on_grid(agent)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
-        self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
+        self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
         self.assertTrue(sandpile.check_agent_is_in_grid(agent))
 
     def test_move_agent_right_from_middle(self,):
@@ -41,14 +43,15 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
         EXPECTED_Y_POS = self.Y_POS_INIT
         agent, sandpile = self.setup_agent_grid(self.X_POS_INIT, self.Y_POS_INIT, self.N_grid)
 
-        sandpile.print_grid()
+        sandpile.print_agent_pos_on_grid(agent)
         print(agent.get_agent_pos())
         direction = Directions.RIGHT
 
         sandpile.move_agent_in_direction(direction, agent)
+        sandpile.print_agent_pos_on_grid(agent)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
-        self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
+        self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
         self.assertTrue(sandpile.check_agent_is_in_grid(agent))
 
     def test_move_agent_up_from_middle(self,):
@@ -63,7 +66,7 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
-        self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
+        self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
         self.assertTrue(sandpile.check_agent_is_in_grid(agent))
 
     def test_move_agent_down_from_middle(self,):
@@ -78,7 +81,7 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
-        self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
+        self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
         self.assertTrue(sandpile.check_agent_is_in_grid(agent))
     
 
@@ -93,7 +96,7 @@ class TestAgentMoveFuncsFromLeft(unittest.TestCase):
     def setup_agent_grid(self, X_POS_INIT, Y_POS_INIT, N_grid):
         DROP_SAND=False
         agent = Agent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT)
-        sandpile = Sandpile(N_grid=N_grid, agent=agent, DROP_SAND=DROP_SAND)
+        sandpile = Sandpile(N_grid=N_grid, agents=[agent], DROP_SAND=DROP_SAND)
         return agent, sandpile
 
     def test_move_agent_left_from_left_bound(self,):
@@ -109,9 +112,9 @@ class TestAgentMoveFuncsFromLeft(unittest.TestCase):
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
-        self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
+        self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
         self.assertFalse(sandpile.check_agent_is_in_grid(agent))
-        self.assertFalse(sandpile.check_agent_is_in_grid(sandpile.agent))
+        self.assertFalse(sandpile.check_agent_is_in_grid(sandpile.agents[0]))
 
 
 class TestAgentMoveFuncsFromRight(unittest.TestCase):
@@ -125,7 +128,7 @@ class TestAgentMoveFuncsFromRight(unittest.TestCase):
     def setup_agent_grid(self, X_POS_INIT, Y_POS_INIT, N_grid):
         DROP_SAND=False
         agent = Agent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT)
-        sandpile = Sandpile(N_grid=N_grid, agent=agent, DROP_SAND=DROP_SAND)
+        sandpile = Sandpile(N_grid=N_grid, agents=[agent], DROP_SAND=DROP_SAND)
         return agent, sandpile
 
     def test_move_agent_right_from_right_bound(self,):
@@ -141,9 +144,9 @@ class TestAgentMoveFuncsFromRight(unittest.TestCase):
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
-        self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
+        self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
         self.assertFalse(sandpile.check_agent_is_in_grid(agent))
-        self.assertFalse(sandpile.check_agent_is_in_grid(sandpile.agent))
+        self.assertFalse(sandpile.check_agent_is_in_grid(sandpile.agents[0]))
 
 
 class TestAgentMoveFuncsFromTop(unittest.TestCase):
@@ -157,7 +160,7 @@ class TestAgentMoveFuncsFromTop(unittest.TestCase):
     def setup_agent_grid(self, X_POS_INIT, Y_POS_INIT, N_grid):
         DROP_SAND=False
         agent = Agent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT)
-        sandpile = Sandpile(N_grid=N_grid, agent=agent, DROP_SAND=DROP_SAND)
+        sandpile = Sandpile(N_grid=N_grid, agents=[agent], DROP_SAND=DROP_SAND)
         return agent, sandpile
 
     def test_move_agent_up_from_top_bound(self,):
@@ -173,9 +176,9 @@ class TestAgentMoveFuncsFromTop(unittest.TestCase):
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
-        self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
+        self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
         self.assertFalse(sandpile.check_agent_is_in_grid(agent))
-        self.assertFalse(sandpile.check_agent_is_in_grid(sandpile.agent))
+        self.assertFalse(sandpile.check_agent_is_in_grid(sandpile.agents[0]))
 
 class TestAgentMoveFuncsFromBot(unittest.TestCase):
 
@@ -188,7 +191,7 @@ class TestAgentMoveFuncsFromBot(unittest.TestCase):
     def setup_agent_grid(self, X_POS_INIT, Y_POS_INIT, N_grid):
         DROP_SAND=False
         agent = Agent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT)
-        sandpile = Sandpile(N_grid=N_grid, agent=agent, DROP_SAND=DROP_SAND)
+        sandpile = Sandpile(N_grid=N_grid, agents=[agent], DROP_SAND=DROP_SAND)
         return agent, sandpile
 
     def test_move_agent_down_from_bot_bound(self,):
@@ -204,9 +207,9 @@ class TestAgentMoveFuncsFromBot(unittest.TestCase):
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
         self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
-        self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
+        self.assertEqual(agent.get_agent_pos(), sandpile.agents[0].get_agent_pos())
         self.assertFalse(sandpile.check_agent_is_in_grid(agent))
-        self.assertFalse(sandpile.check_agent_is_in_grid(sandpile.agent))
+        self.assertFalse(sandpile.check_agent_is_in_grid(sandpile.agents[0]))
 
 def suite():
     suite = unittest.TestSuite()
