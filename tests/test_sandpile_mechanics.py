@@ -252,7 +252,7 @@ class TestSandpileMechanics(unittest.TestCase):
         arraysEqual = np.array_equal(EXPECTED_GRID, sandpile.get_sandpile())
         sandpile.print_grid()
         self.assertTrue(arraysEqual)
-        
+
         self.assertEqual(EXPECTED_AVALANCHE_SIZE, sandpile.avalanche_sizes[0])
 
 def suite():
@@ -268,4 +268,5 @@ def suite():
 
 if __name__ == '__main__':
     runner = unittest.TextTestRunner()
-    runner.run(suite())
+    results = runner.run(suite())
+    print(results)
