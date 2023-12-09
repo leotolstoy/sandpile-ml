@@ -55,7 +55,7 @@ norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
 X_POS_INIT = N_grid//2
 Y_POS_INIT = N_grid//2
-sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS)
+sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, MAX_STEPS=N_runs)
 
 
 
@@ -84,7 +84,7 @@ if DO_ANIM:
 
 else:
     for i in range(N_runs):
-        # print(i)
+        print(i)
         sandpile.step()
 
 # get avalance sizes

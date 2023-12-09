@@ -11,6 +11,8 @@ class Agent():
         self.x_pos = x_pos_init
         self.y_pos = y_pos_init
         self.moves = []
+        self.rewards = []
+        self.cumulative_rewards = []
         self.is_in_game = True
 
 
@@ -30,6 +32,13 @@ class Agent():
     
     def remove_agent_from_game(self,):
         self.is_in_game = False
+    
+    # add reward to list of rewards
+    def get_reward(self, reward):
+        self.rewards.append(reward)
+        self.cumulative_rewards = np.cumsum(np.array(self.rewards))
+        self.cumulative_score = np.sum(self.rewards)
+
 
 
 class RandomAgent(Agent):

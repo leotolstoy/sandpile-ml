@@ -4,7 +4,7 @@ from util import Directions
 
 class Sandpile():
 
-    def __init__(self,N_grid=2, MAXIMUM_GRAINS=4, agent=None, DROP_SAND=True):
+    def __init__(self,N_grid=2, MAXIMUM_GRAINS=4, agent=None, DROP_SAND=True, MAX_STEPS=1000):
 
         # set up the total grid, which is the sandpile plus empty void around it
 
@@ -39,8 +39,20 @@ class Sandpile():
         self.was_avalanching_before = False
         self.avalanche_sizes = []
         self.agent = agent
+        self.REWARD_OFF_GRID = -1e4
+        self.MAX_STEPS = MAX_STEPS
+        self.iteration = 0
 
     def step(self,):
+        #check that the game is still running
+        game_is_running = self.iteration < self.MAX_STEPS
+        if self.agent:
+            game_is_running = game_is_running and self.agent.is_in_game
+
+        if not game_is_running:
+            return game_is_running
+
+        self.iteration += 1
         # determine if we should avalanche, based on if any of the grid values
         # are greater than the alloweable maximum grain number
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
@@ -48,6 +60,7 @@ class Sandpile():
         
         # update the sandpile environment
         if not self.is_avalanching:
+            # print('NOT AVALANCHING')
             if self.DROP_SAND:
                 self.drop_sandgrain()
 
@@ -55,14 +68,14 @@ class Sandpile():
             if self.agent and self.agent.is_in_game:
                 
                 
-                print('agent_pos: ', self.agent.get_agent_pos())
+                print('agent_pos (i,j) (Y, X): ', self.agent.get_agent_pos())
 
                 print('Moving agent')
                 # have the agent choose a direction to move in
                 direction = self.agent.choose_move(self)
                 self.move_agent_in_direction(direction, self.agent)
 
-                print('agent_pos after normal move: ',self.agent.get_agent_pos())
+                print('agent_pos after normal move (i,j) (Y, X): ',self.agent.get_agent_pos())
 
                 # check if agent is in game
                 if not self.check_agent_is_in_grid(self.agent):
@@ -84,8 +97,28 @@ class Sandpile():
             self.was_avalanching_before = True
 
         # get agent rewards based on position
+        if self.agent:
+            # if the agent is still in the game the reward is the value of the index
+            if self.check_agent_is_in_grid(self.agent):
+                y_pos, x_pos = self.agent.get_agent_pos()
+                reward = self.grid[y_pos, x_pos]
+                print('REWARD FOR MOVE: ', reward)
+                self.agent.get_reward(reward)
+
+            else:
+                print('REWARD FOR OFF GRID')
+                self.agent.get_reward(self.REWARD_OFF_GRID)
+
+            # print('rewards: ', self.agent.rewards)
+            print('cumulative_score: ', self.agent.cumulative_score)
+            # print('cumulative_rewards:', self.agent.cumulative_rewards)
+
+        # # check if agent is still in game
+        # if self.agent and not self.check_agent_is_in_grid(self.agent):
+        #     game_is_running = False
 
         # input()
+        return game_is_running
 
     def move_agent_to_point(self,new_x_pos, new_y_pos):
         self.agent.update_agent_pos(new_x_pos, new_y_pos)
@@ -119,7 +152,6 @@ class Sandpile():
         new_x_pos, new_y_pos = self.get_new_pos_from_direction(direction, agent.x_pos, agent.y_pos)
         self.move_agent_to_point(new_x_pos, new_y_pos)
 
-    # def get_neighbor_idxs(x_pos, y_pos):
 
     def choose_random_neighbor_from_point(self, x_pos, y_pos):
 
@@ -156,8 +188,11 @@ class Sandpile():
 
     def avalanche(self,):
         print('AVALANCHING')
+        
         if self.agent:
+            print('agent_pos (i,j) (Y, X) before avalanche: ', self.agent.get_agent_pos())
             self.print_grid_and_agent_pos(self.agent)
+
         # find indices where avalanching/unstable
         # returns a Nx2 array of xy coordinates where N is the number of indices over the maximum
         avalanche_idxs = np.argwhere(self.grid >= self.MAXIMUM_GRAINS)
@@ -195,15 +230,15 @@ class Sandpile():
             print('moving agent due to avalanche')
             self.move_agent_random_from_point(self.agent)
              
-            print('agent pos after avalanche', self.agent.get_agent_pos())
+            print('agent pos after avalanche (i,j) (Y, X)', self.agent.get_agent_pos())
             if self.agent:
                 self.print_agent_pos_on_grid(self.agent)
-            input()
+            # input()
         # input()
 
         
         
-        # check if agent is in game
+        # check if agent is still in game
         if self.agent and not self.check_agent_is_in_grid(self.agent):
             self.agent.remove_agent_from_game()
             print('REMOVING AGENT FROM GAME FROM AVALANCHE')
