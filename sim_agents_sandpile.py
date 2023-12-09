@@ -97,10 +97,11 @@ print('cumulative agent score: ', sandpile.agent.cumulative_score)
 fig_rewards, axs_rewards = plt.subplots(2,1)
 axs_rewards[0].plot(sandpile.agent.rewards,color='r',marker='o')
 axs_rewards[0].set_ylabel('Rewards')
+axs_rewards[0].set_ylim(bottom=-1, top = 5)
 
 axs_rewards[1].plot(sandpile.agent.cumulative_rewards,color='b',marker='o')
 axs_rewards[1].set_ylabel('Cumulative Rewards')
-
+axs_rewards[1].set_ylim(bottom=-1)
 
 # get avalance sizes
 avalanche_sizes = np.array(sandpile.avalanche_sizes)
