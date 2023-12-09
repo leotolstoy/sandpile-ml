@@ -32,7 +32,7 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
 
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
-        self.assertEqual((EXPECTED_X_POS, EXPECTED_Y_POS), agent.get_agent_pos())
+        self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
         self.assertTrue(sandpile.check_agent_is_in_grid(agent))
 
@@ -47,7 +47,7 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
 
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
-        self.assertEqual((EXPECTED_X_POS, EXPECTED_Y_POS), agent.get_agent_pos())
+        self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
         self.assertTrue(sandpile.check_agent_is_in_grid(agent))
 
@@ -62,7 +62,7 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
 
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
-        self.assertEqual((EXPECTED_X_POS, EXPECTED_Y_POS), agent.get_agent_pos())
+        self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
         self.assertTrue(sandpile.check_agent_is_in_grid(agent))
 
@@ -77,7 +77,7 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
 
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
-        self.assertEqual((EXPECTED_X_POS, EXPECTED_Y_POS), agent.get_agent_pos())
+        self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
         self.assertTrue(sandpile.check_agent_is_in_grid(agent))
     
@@ -108,7 +108,7 @@ class TestAgentMoveFuncsFromLeft(unittest.TestCase):
 
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
-        self.assertEqual((EXPECTED_X_POS, EXPECTED_Y_POS), agent.get_agent_pos())
+        self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
         self.assertFalse(sandpile.check_agent_is_in_grid(agent))
         self.assertFalse(sandpile.check_agent_is_in_grid(sandpile.agent))
@@ -140,7 +140,7 @@ class TestAgentMoveFuncsFromRight(unittest.TestCase):
 
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
-        self.assertEqual((EXPECTED_X_POS, EXPECTED_Y_POS), agent.get_agent_pos())
+        self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
         self.assertFalse(sandpile.check_agent_is_in_grid(agent))
         self.assertFalse(sandpile.check_agent_is_in_grid(sandpile.agent))
@@ -172,7 +172,7 @@ class TestAgentMoveFuncsFromTop(unittest.TestCase):
 
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
-        self.assertEqual((EXPECTED_X_POS, EXPECTED_Y_POS), agent.get_agent_pos())
+        self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
         self.assertFalse(sandpile.check_agent_is_in_grid(agent))
         self.assertFalse(sandpile.check_agent_is_in_grid(sandpile.agent))
@@ -203,7 +203,7 @@ class TestAgentMoveFuncsFromBot(unittest.TestCase):
 
         sandpile.move_agent_in_direction(direction, agent)
         print(agent.get_agent_pos())
-        self.assertEqual((EXPECTED_X_POS, EXPECTED_Y_POS), agent.get_agent_pos())
+        self.assertEqual((EXPECTED_Y_POS, EXPECTED_X_POS), agent.get_agent_pos())
         self.assertEqual(agent.get_agent_pos(), sandpile.agent.get_agent_pos())
         self.assertFalse(sandpile.check_agent_is_in_grid(agent))
         self.assertFalse(sandpile.check_agent_is_in_grid(sandpile.agent))

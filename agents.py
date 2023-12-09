@@ -17,8 +17,9 @@ class Agent():
     def step(self):
         return -1
 
+    # return agent position in (i,j) convention
     def get_agent_pos(self,):
-        return self.x_pos, self.y_pos
+        return self.y_pos, self.x_pos
 
     def update_agent_pos(self, new_x_pos, new_y_pos):
         self.x_pos = new_x_pos
@@ -34,7 +35,7 @@ class Agent():
 class RandomAgent(Agent):
 
     def __init__(self, x_pos_init=0, y_pos_init=0):
-        super.__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
+        super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
 
 
     def choose_move(self, sandpile):

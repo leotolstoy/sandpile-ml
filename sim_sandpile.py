@@ -7,7 +7,6 @@ from time import time
 
 from util import Directions
 from sandpile import Sandpile
-from agents import RandomAgent
 
 DO_ANIM = not True
 N_grid = 5 #number of cells per side
@@ -56,15 +55,14 @@ norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
 X_POS_INIT = N_grid//2
 Y_POS_INIT = N_grid//2
-agent = RandomAgent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT)
-sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agent=agent)
+sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS)
 
 
 
 def init():
     """initialize animation"""
     img = axs.imshow(sandpile.grid,cmap=cmap,norm=norm, origin="lower")
-    fig.colorbar(img)
+    plt.colorbar(img)
     
     return img,
 
@@ -96,7 +94,7 @@ avalanche_sizes = np.array(sandpile.avalanche_sizes)
 bins = 10
 hist_vals, x_recon = np.histogram(avalanche_sizes, bins=bins, density=True)
 
-fig_hist, axs_hist = plt.subplots(2,1)
+fig, axs_hist = plt.subplots(2,1)
 axs_hist[0].hist(avalanche_sizes,bins=bins, density=True)
 axs_hist[1].loglog(x_recon[:-1],hist_vals,color='r',marker='o')
 
