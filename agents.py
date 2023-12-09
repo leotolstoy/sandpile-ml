@@ -13,7 +13,7 @@ class Agent():
         self.moves = []
         self.rewards = []
         self.cumulative_rewards = []
-        self.is_in_game = True
+        self.in_game = True
 
 
     def step(self):
@@ -30,8 +30,11 @@ class Agent():
     def agent_is_at_pos(self, x_pos, y_pos):
         return (self.x_pos == x_pos and self.y_pos == y_pos)
     
+    def is_in_game(self,):
+        return self.in_game
+
     def remove_agent_from_game(self,):
-        self.is_in_game = False
+        self.in_game = False
     
     def move_agent_in_direction(self, direction):
         
@@ -54,7 +57,7 @@ class Agent():
 
     # get possible moves: the agent will never choose to fall off
     # the edge of the board
-    def get_possible_moves(self, sandpile):
+    def get_possible_moves_stay_in_grid(self, sandpile):
         possible_moves = [Directions.STAY, Directions.LEFT, Directions.RIGHT, Directions.UP, Directions.DOWN]
 
         if self.x_pos <= sandpile.left_bound_idx:
@@ -82,7 +85,7 @@ class RandomAgent(Agent):
 
     def choose_move(self, sandpile):
 
-        possible_moves = self.get_possible_moves(sandpile)
+        possible_moves = self.get_possible_moves_stay_in_grid(sandpile)
 
         print('possible_moves')
         print(possible_moves)
@@ -103,7 +106,7 @@ class MaxAgent(Agent):
 
     def choose_move(self, sandpile):
         
-        possible_moves = self.get_possible_moves(sandpile)
+        possible_moves = self.get_possible_moves_stay_in_grid(sandpile)
 
         # shuffle possible moves, this is done because in the event of 
         # an eventual tie between the maximums, numpy only returns the 
