@@ -17,6 +17,19 @@ class Agent():
     def step(self):
         return -1
 
+    def get_agent_pos(self,):
+        return self.x_pos, self.y_pos
+        
+    def update_agent_pos(self, new_x_pos, new_y_pos):
+        self.x_pos = new_x_pos
+        self.y_pos = new_y_pos
+
+    def agent_is_at_pos(self, x_pos, y_pos):
+        return (self.x_pos == x_pos and self.y_pos == y_pos)
+    
+    def remove_agent_from_game(self,):
+        self.is_in_game = False
+
 
 class RandomAgent(Agent):
 
@@ -49,13 +62,5 @@ class RandomAgent(Agent):
         
         return move
     
-    def update_agent_pos(self, new_x_pos, new_y_pos):
-        self.x_pos = new_x_pos
-        self.y_pos = new_y_pos
-
-    def agent_is_at_pos(self, x_pos, y_pos):
-        return (self.x_pos == x_pos and self.y_pos == y_pos)
     
-    def remove_agent_from_game(self,):
-        self.is_in_game = False
 

@@ -48,7 +48,8 @@ axs.set_yticks(np.arange(-.5, N_grid, N_tick_step))
 # https://stackoverflow.com/questions/43971138/python-plotting-colored-grid-based-on-values
 # https://stackoverflow.com/questions/7229971/2d-grid-data-visualization-in-python
 # https://matplotlib.org/stable/api/_as_gen/matplotlib.animation.FuncAnimation.html
-cmap = plt.cm.viridis
+# cmap = plt.cm.viridis
+cmap = plt.cm.get_cmap('Blues')
 bounds = np.arange(0, MAXIMUM_GRAINS+1)
 norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 

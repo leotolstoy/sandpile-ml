@@ -4,7 +4,7 @@ from util import Directions
 
 class Sandpile():
 
-    def __init__(self,N_grid=2, MAXIMUM_GRAINS=4, agent=None):
+    def __init__(self,N_grid=2, MAXIMUM_GRAINS=4, agent=None, DROP_SAND=True):
 
         # set up the total grid, which is the sandpile plus empty void around it
 
@@ -33,6 +33,7 @@ class Sandpile():
 
 
         self.MAXIMUM_GRAINS = MAXIMUM_GRAINS
+        self.DROP_SAND = DROP_SAND
         self.avalanche_size = 0
         self.is_avalanching = False
         self.was_avalanching_before = False
@@ -46,13 +47,16 @@ class Sandpile():
 
         # run the agent
         if self.agent and self.agent.is_in_game:
-            move = self.agent.choose_move()
-            self.move_agent_in_direction(move, self.agent)
+
+            # have the agent choose a direction to move in
+            direction = self.agent.choose_move()
+            self.move_agent_in_direction(direction, self.agent)
 
 
         # update the sandpile environment
         if not self.is_avalanching:
-            self.drop_sandgrain()
+            if self.DROP_SAND:
+                self.drop_sandgrain()
             
             if self.was_avalanching_before:
                 self.avalanche_sizes.append(self.avalanche_size)
@@ -71,24 +75,24 @@ class Sandpile():
     def move_agent_to_point(self,new_x_pos, new_y_pos):
         self.agent.update_agent_pos(new_x_pos, new_y_pos)
             
-    def get_new_pos_from_direction(self, move, x_pos, y_pos):
-        if move == Directions.LEFT:
+    def get_new_pos_from_direction(self, direction, x_pos, y_pos):
+        if direction == Directions.LEFT:
             new_x_pos = x_pos - 1
             new_y_pos = y_pos
 
-        elif move == Directions.RIGHT:
+        elif direction == Directions.RIGHT:
             new_x_pos = x_pos + 1
             new_y_pos = y_pos
 
-        elif move == Directions.UP:
+        elif direction == Directions.UP:
             new_x_pos = x_pos
             new_y_pos = y_pos - 1
 
-        elif move == Directions.DOWN:
+        elif direction == Directions.DOWN:
             new_x_pos = x_pos
             new_y_pos = y_pos + 1
 
-        elif move == Directions.STAY:
+        elif direction == Directions.STAY:
             new_x_pos = x_pos
             new_y_pos = y_pos
 
