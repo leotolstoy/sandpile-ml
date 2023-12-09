@@ -19,7 +19,7 @@ class Agent():
 
     def get_agent_pos(self,):
         return self.x_pos, self.y_pos
-        
+
     def update_agent_pos(self, new_x_pos, new_y_pos):
         self.x_pos = new_x_pos
         self.y_pos = new_y_pos

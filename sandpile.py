@@ -114,12 +114,17 @@ class Sandpile():
 
         return new_x_pos, new_y_pos
 
-    def move_agent_random_from_point(self,):
-        x_pos = self.agent.x_pos
-        y_pos = self.agent.y_pos
+    def move_agent_random_from_point(self, agent):
+        x_pos = agent.x_pos
+        y_pos = agent.y_pos
         new_agent_x_pos, new_agent_y_pos = self.choose_random_neighbor_from_point(x_pos, y_pos)
         self.move_agent_to_point(new_agent_x_pos, new_agent_y_pos)
-        
+    
+    def check_agent_is_in_grid(self, agent):
+        in_x_pos = agent.x_pos >= self.left_bound_idx and agent.x_pos <= self.right_bound_idx
+        in_y_pos = agent.y_pos >= self.top_bound_idx and agent.y_pos <= self.bot_bound_idx
+
+        return in_x_pos and in_y_pos
 
     def drop_sandgrain(self,):
         # drop a grain on a uniformly selected location
@@ -166,7 +171,7 @@ class Sandpile():
 
         # move the agent to one of the neighbors if the agent was at the unstable coordinate
         if self.agent and self.agent.is_in_game and agent_is_at_unstable_pos:
-            self.move_agent_random_from_point()
+            self.move_agent_random_from_point(self.agent)
 
 
         print('POST TOPPLE')
