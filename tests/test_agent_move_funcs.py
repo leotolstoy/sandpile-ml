@@ -18,7 +18,6 @@ class TestAgentMoveFuncsFromMiddle(unittest.TestCase):
         DROP_SAND=False
         agent = Agent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT)
         sandpile = Sandpile(N_grid=N_grid, agents=[agent], DROP_SAND=DROP_SAND)
-        # sandpile.add_agent(agent)
         return agent, sandpile
 
     def test_move_agent_left_from_middle(self,):
@@ -211,6 +210,50 @@ class TestAgentMoveFuncsFromBot(unittest.TestCase):
         self.assertFalse(sandpile.check_agent_is_in_grid(agent))
         self.assertFalse(sandpile.check_agent_is_in_grid(sandpile.agents[0]))
 
+class TestMultipleAgentMoveFuncs(unittest.TestCase):
+
+    def setUp(self):
+        self.N_grid = 5 #number of cells per side
+        self.X_POS_INIT = self.N_grid // 2
+        self.Y_POS_INIT = self.N_grid // 2
+        
+
+    def test_move_multiple_agents(self,):
+        EXPECTED_X_POS1 = self.X_POS_INIT - 1
+        EXPECTED_Y_POS1 = self.Y_POS_INIT
+
+        EXPECTED_X_POS2 = 0 + 1
+        EXPECTED_Y_POS2 = 0
+        
+        
+        DROP_SAND=False
+        agent1 = Agent(x_pos_init=self.X_POS_INIT, y_pos_init=self.Y_POS_INIT)
+        agent2 = Agent(x_pos_init=0, y_pos_init=0)
+        agents = [agent1, agent2]
+        sandpile = Sandpile(N_grid=self.N_grid, agents=agents, DROP_SAND=DROP_SAND)
+
+        sandpile.print_agent_pos_on_grid(agent1)
+        print(agent1.get_agent_pos())
+        direction1 = Directions.LEFT
+        direction2 = Directions.RIGHT
+
+        print('Moving Agent 1')
+        sandpile.move_agent_in_direction(direction1, agent1)
+        sandpile.print_agent_pos_on_grid(agent1)
+        print(agent1.get_agent_pos())
+
+        print('Moving Agent 2')
+        sandpile.move_agent_in_direction(direction2, agent2)
+        sandpile.print_agent_pos_on_grid(agent2)
+        print(agent2.get_agent_pos())
+
+        self.assertEqual((EXPECTED_Y_POS1, EXPECTED_X_POS1), agent1.get_agent_pos())
+        self.assertEqual(agent1.get_agent_pos(), sandpile.agents[0].get_agent_pos())
+
+        self.assertEqual((EXPECTED_Y_POS2, EXPECTED_X_POS2), agent2.get_agent_pos())
+        self.assertEqual(agent2.get_agent_pos(), sandpile.agents[1].get_agent_pos())
+
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(TestAgentMoveFuncsFromMiddle('test_move_agent_left_from_middle'))
@@ -221,6 +264,7 @@ def suite():
     suite.addTest(TestAgentMoveFuncsFromRight('test_move_agent_right_from_right_bound'))
     suite.addTest(TestAgentMoveFuncsFromTop('test_move_agent_up_from_top_bound'))
     suite.addTest(TestAgentMoveFuncsFromBot('test_move_agent_down_from_bot_bound'))
+    suite.addTest(TestMultipleAgentMoveFuncs('test_move_multiple_agents'))
     return suite
 
 
