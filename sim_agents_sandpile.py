@@ -57,7 +57,7 @@ norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 X_POS_INIT = N_grid//2
 Y_POS_INIT = N_grid//2
 agent = RandomAgent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT)
-sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agent=agent, MAX_STEPS=N_runs)
+sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=[agent], MAX_STEPS=N_runs)
 
 
 
@@ -92,14 +92,14 @@ else:
         i+=1
         game_is_running = sandpile.step()
 
-print('cumulative agent score: ', sandpile.agent.cumulative_score)
+print('cumulative agent score: ', agent.cumulative_score)
 
 fig_rewards, axs_rewards = plt.subplots(2,1)
-axs_rewards[0].plot(sandpile.agent.rewards,color='r',marker='o')
+axs_rewards[0].plot(agent.rewards,color='r',marker='o')
 axs_rewards[0].set_ylabel('Rewards')
 axs_rewards[0].set_ylim(bottom=-1, top = 5)
 
-axs_rewards[1].plot(sandpile.agent.cumulative_rewards,color='b',marker='o')
+axs_rewards[1].plot(agent.cumulative_rewards,color='b',marker='o')
 axs_rewards[1].set_ylabel('Cumulative Rewards')
 axs_rewards[1].set_ylim(bottom=-1)
 
