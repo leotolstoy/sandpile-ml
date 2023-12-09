@@ -74,8 +74,6 @@ class Agent():
 
         return possible_moves
 
-    
-
 
 class RandomAgent(Agent):
 
@@ -134,3 +132,38 @@ class MaxAgent(Agent):
         move = possible_moves[max_reward_idx]
 
         return move
+
+class SeekSpecificValueAgent(Agent):
+    # This agent chooses to move to the nearest square (given the four cardinal directions
+    # plus staying in place) that has a specific value
+
+    def __init__(self, x_pos_init=0, y_pos_init=0, specific_value=1):
+        super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
+        self.specific_value = specific_value
+
+    def choose_move(self, sandpile):
+        # chooses the move to go to a specific value
+        # if it can't find the value, choose a random direction
+        
+        possible_moves = self.get_possible_moves_stay_in_grid(sandpile)
+
+        # shuffle possible moves, this is done because in the event of 
+        # an eventual tie between the specific values, numpy only returns the 
+        # first index, so we want to avoid bias based on which Direction
+        # is listed first
+        random.shuffle(possible_moves)
+
+        # evaluate possible moves based on targeted value
+        prewards = []
+        moves_to_value = []
+        for pmove in possible_moves:
+            new_x_pos, new_y_pos = get_new_pos_from_direction(pmove, self.x_pos, self.y_pos)
+            preward = sandpile.grid[new_y_pos, new_x_pos]
+
+            if preward == self.specific_value:
+                moves_to_value.append(pmove)
+
+        if len(moves_to_value) > 0:
+            return moves_to_value[0]
+        else:
+            return random.choice(possible_moves)
