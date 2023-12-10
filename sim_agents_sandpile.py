@@ -10,7 +10,7 @@ from sandpile import Sandpile
 from agents import RandomAgent, MaxAgent, SeekSpecificValueAgent
 
 DO_ANIM = not True
-N_grid = 5 #number of cells per side
+N_grid = 10 #number of cells per side
 # N_tick_step = 5
 N_tick_step = 1
 
@@ -112,7 +112,7 @@ axs_rewards[0].set_ylim(bottom=-1, top = 5)
 
 axs_rewards[1].plot(random_agent.cumulative_rewards,color='r',marker='o')
 axs_rewards[1].plot(max_agent.cumulative_rewards,color='b',marker='o')
-axs_rewards[1].plot(ssv_agent.cumulative_rewards,color='g',marker='o',label='Max Agent')
+axs_rewards[1].plot(ssv_agent.cumulative_rewards,color='g',marker='o',label='SSV Agent')
 
 
 axs_rewards[1].set_ylabel('Cumulative Rewards')

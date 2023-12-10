@@ -85,11 +85,11 @@ class RandomAgent(Agent):
 
         possible_moves = self.get_possible_moves_stay_in_grid(sandpile)
 
-        print('possible_moves')
-        print(possible_moves)
+        # print('possible_moves')
+        # print(possible_moves)
         move = random.choice(possible_moves)
-        print('move')
-        print(move)
+        # print('move')
+        # print(move)
         self.moves.append(move)
         
         return move
@@ -124,12 +124,13 @@ class MaxAgent(Agent):
             prewards.append(preward)
 
 
-        print('prewards')
-        print(prewards)
+        # print('prewards')
+        # print(prewards)
         max_reward_idx = np.argmax(prewards)
         # print('max_reward_idx')
         # print(max_reward_idx)
         move = possible_moves[max_reward_idx]
+        self.moves.append(move)
 
         return move
 
@@ -164,6 +165,9 @@ class SeekSpecificValueAgent(Agent):
                 moves_to_value.append(pmove)
 
         if len(moves_to_value) > 0:
-            return moves_to_value[0]
+            move = moves_to_value[0]
         else:
-            return random.choice(possible_moves)
+            move = random.choice(possible_moves)
+
+        self.moves.append(move)
+        return move

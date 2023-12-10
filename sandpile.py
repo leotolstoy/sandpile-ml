@@ -60,13 +60,13 @@ class Sandpile():
             for agent in self.agents:
                 if agent.is_in_game():
                     
-                    print('agent_pos (i,j) (Y, X): ', agent.get_agent_pos())
-                    print('Moving agent')
+                    # print('agent_pos (i,j) (Y, X): ', agent.get_agent_pos())
+                    # print('Moving agent')
                     # have the agent choose a direction to move in
                     direction = agent.choose_move(self)
                     agent.move_agent_in_direction(direction)
 
-                    print('agent_pos after normal move (i,j) (Y, X): ', agent.get_agent_pos())
+                    # print('agent_pos after normal move (i,j) (Y, X): ', agent.get_agent_pos())
 
             # handle state transition from avalanching to not avalanching
             # this records the avalanche size
@@ -74,7 +74,7 @@ class Sandpile():
                 self.avalanche_sizes.append(self.avalanche_size)
                 self.was_avalanching_before = False
                 self.avalanche_size = 0
-                print(self.avalanche_sizes)
+                # print(self.avalanche_sizes)
 
         else: # if avalanching
             self.avalanche()
@@ -88,14 +88,14 @@ class Sandpile():
                 if self.check_agent_is_in_grid(agent):
                     y_pos, x_pos = agent.get_agent_pos()
                     reward = self.grid[y_pos, x_pos]
-                    print('REWARD FOR MOVE: ', reward)
+                    # print('REWARD FOR MOVE: ', reward)
                     agent.get_reward(reward)
 
                 else: # agent not in grid, remove it from game
-                    print('REWARD FOR OFF GRID')
+                    # print('REWARD FOR OFF GRID')
                     agent.get_reward(self.REWARD_OFF_GRID)
                     agent.remove_agent_from_game()
-                    print('REMOVING AGENT FROM GAME')
+                    # print('REMOVING AGENT FROM GAME')
 
             # print('rewards: ', self.agent.rewards)
             # print('cumulative_score: ', self.agent.cumulative_score)
@@ -128,11 +128,11 @@ class Sandpile():
         # print(self.grid)
 
     def avalanche(self,):
-        print('AVALANCHING')
+        # print('AVALANCHING')
         
-        for agent in self.agents:
-            print('agent_pos (i,j) (Y, X) before avalanche: ', agent.get_agent_pos())
-            self.print_grid_and_agent_pos(agent)
+        # for agent in self.agents:
+            # print('agent_pos (i,j) (Y, X) before avalanche: ', agent.get_agent_pos())
+            # self.print_grid_and_agent_pos(agent)
 
         # find indices where avalanching/unstable
         # returns a Nx2 array of xy coordinates where N is the number of indices over the maximum
@@ -150,8 +150,8 @@ class Sandpile():
         x_coord_unstable = rand_unstable[1]
         y_coord_unstable = rand_unstable[0]
 
-        print('y_coord_unstable, x_coord_unstable')
-        print(y_coord_unstable, x_coord_unstable)
+        # print('y_coord_unstable, x_coord_unstable')
+        # print(y_coord_unstable, x_coord_unstable)
 
 
         # topple the grid at this coordinate
@@ -160,8 +160,8 @@ class Sandpile():
         # increment neighboring vertex counts
         self.increment_neighbors(y_coord_unstable, x_coord_unstable)
 
-        print('POST TOPPLE')
-        self.print_grid()
+        # print('POST TOPPLE')
+        # self.print_grid()
 
         # move the agent to one of the neighbors if the agent was at the unstable coordinate
         for agent in self.agents:
@@ -171,11 +171,11 @@ class Sandpile():
 
             if agent.is_in_game() and agent_is_at_unstable_pos:
                 
-                print('moving agent due to avalanche')
+                # print('moving agent due to avalanche')
                 agent.move_agent_random_from_point()
                 
-                print('agent pos after avalanche (i,j) (Y, X)', agent.get_agent_pos())
-                self.print_agent_pos_on_grid(agent)
+                # print('agent pos after avalanche (i,j) (Y, X)', agent.get_agent_pos())
+                # self.print_agent_pos_on_grid(agent)
                 # input()
         # input()
 
