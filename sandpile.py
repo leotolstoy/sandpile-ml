@@ -49,6 +49,21 @@ class Sandpile():
             return game_is_running
 
         self.iteration += 1
+
+
+        # run the agents
+        for agent in self.agents:
+            if agent.is_in_game():
+                
+                # print('agent_pos (i,j) (Y, X): ', agent.get_agent_pos())
+                # print('Moving agent')
+                # have the agent choose a direction to move in
+                direction = agent.choose_move(self)
+                agent.move_agent_in_direction(direction)
+
+                # print('agent_pos after normal move (i,j) (Y, X): ', agent.get_agent_pos())
+
+
         # determine if we should avalanche, based on if any of the grid values
         # are greater than the alloweable maximum grain number
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
@@ -59,17 +74,7 @@ class Sandpile():
             if self.DROP_SAND:
                 self.drop_sandgrain_randomly()
 
-            # run the agents
-            for agent in self.agents:
-                if agent.is_in_game():
-                    
-                    # print('agent_pos (i,j) (Y, X): ', agent.get_agent_pos())
-                    # print('Moving agent')
-                    # have the agent choose a direction to move in
-                    direction = agent.choose_move(self)
-                    agent.move_agent_in_direction(direction)
-
-                    # print('agent_pos after normal move (i,j) (Y, X): ', agent.get_agent_pos())
+            
 
             # handle state transition from avalanching to not avalanching
             # this records the avalanche size

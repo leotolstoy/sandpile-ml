@@ -16,8 +16,8 @@ class Agent():
         self.in_game = True
 
 
-    def step(self):
-        return -1
+    def choose_move(self, sandpile):
+        return Directions.STAY
 
     # return agent position in (i,j) convention
     def get_agent_pos(self,):
