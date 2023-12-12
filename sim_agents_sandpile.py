@@ -3,7 +3,6 @@ import random
 from matplotlib import pyplot as plt
 from matplotlib import animation
 import matplotlib as mpl
-from time import time
 
 from sandpile import Sandpile, run_sandpile_alone
 from agents import RandomAgent, MaxAgent, SeekSpecificValueAgent

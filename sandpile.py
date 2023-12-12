@@ -31,7 +31,6 @@ class Sandpile():
         self.was_avalanching_before = False
         self.avalanche_sizes = []
         self.agents = agents
-        self.REWARD_OFF_GRID = -1e4
         self.MAX_STEPS = MAX_STEPS
         self.iteration = 0
 
@@ -93,11 +92,15 @@ class Sandpile():
                     y_pos, x_pos = agent.get_agent_pos()
                     reward = self.grid[y_pos, x_pos]
                     # print('REWARD FOR MOVE: ', reward)
-                    agent.get_reward(reward)
+                    agent.append_reward(reward)
 
                 else: # agent not in grid, remove it from game
                     # print('REWARD FOR OFF GRID')
-                    agent.get_reward(self.REWARD_OFF_GRID)
+
+                    # reset agent reward to zero
+                    # agent.append_reward(-agent.get_cumulative_score())
+                    agent.append_reward(0)
+
                     agent.remove_agent_from_game()
                     # print('REMOVING AGENT FROM GAME')
 

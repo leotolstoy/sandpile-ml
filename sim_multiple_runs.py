@@ -1,10 +1,7 @@
 import numpy as np
 import random
 from matplotlib import pyplot as plt
-from time import time
-
-from util import Directions
-from sandpile import Sandpile
+from sandpile import Sandpile, run_sandpile_alone
 from agents import RandomAgent, MaxAgent, SeekSpecificValueAgent
 
 N_grid = 5 #number of cells per side
@@ -37,15 +34,14 @@ for _ in range(N_RUNS):
     # generate initial grid
     # run the sandpile 1000 times
     initial_grid_N = 1000
-    print('Generating initial grid')
+    # print('Generating initial grid')
     initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
-    print('initial grid')
-    print(initial_grid)
+    # print('initial grid')
+    # print(initial_grid)
 
 
     # start new sandpile with initial grid
-    sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=N_runs)
-    REWARD_OFF_GRID = sandpile.REWARD_OFF_GRID
+    sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=max_nmoves)
 
     i = 0
     game_is_running = sandpile.step()
@@ -56,9 +52,9 @@ for _ in range(N_RUNS):
 
 
     # aggregate scores and moves
-    random_agent_cumulative_score = random_agent.cumulative_score - REWARD_OFF_GRID
-    max_agent_cumulative_score = max_agent.cumulative_score - REWARD_OFF_GRID
-    ssv_agent_cumulative_score = ssv_agent.cumulative_score - REWARD_OFF_GRID
+    random_agent_cumulative_score = random_agent.cumulative_score
+    max_agent_cumulative_score = max_agent.cumulative_score
+    ssv_agent_cumulative_score = ssv_agent.cumulative_score
 
     random_agent_nmoves_run = len(random_agent.moves)
     max_agent_nmoves_run = len(max_agent.moves)

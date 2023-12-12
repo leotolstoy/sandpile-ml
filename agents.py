@@ -50,10 +50,14 @@ class Agent():
 
     
     # add reward to list of rewards
-    def get_reward(self, reward):
+    def append_reward(self, reward):
         self.rewards.append(reward)
         self.cumulative_rewards = np.cumsum(np.array(self.rewards))
         self.cumulative_score = np.sum(self.rewards)
+
+    def get_cumulative_score(self,):
+        return self.cumulative_score
+    
 
     # get possible moves: the agent will never choose to fall off
     # the edge of the board
