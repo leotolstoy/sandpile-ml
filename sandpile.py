@@ -1,6 +1,5 @@
 import numpy as np
 import random
-from util import Directions
 
 class Sandpile():
 
@@ -239,5 +238,15 @@ class Sandpile():
     def print_grid_and_agent_pos(self, agent):
         agent_grid = self.get_agent_pos_on_grid(agent)
         print(self.get_sandpile(),'\n\n' , agent_grid)
+
+def run_sandpile_alone(N_grid=2, initial_grid=None, MAXIMUM_GRAINS=4, DROP_SAND=True, MAX_STEPS=1000):
+    # runs the sandpile for MAX_STEPS iterations and returns it
+    sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=DROP_SAND, MAX_STEPS=MAX_STEPS)
+
+    for _ in range(MAX_STEPS):
+        sandpile.step()
+
+    return sandpile.get_sandpile()
+    
 
         

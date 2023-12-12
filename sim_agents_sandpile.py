@@ -5,8 +5,7 @@ from matplotlib import animation
 import matplotlib as mpl
 from time import time
 
-from util import Directions
-from sandpile import Sandpile
+from sandpile import Sandpile, run_sandpile_alone
 from agents import RandomAgent, MaxAgent, SeekSpecificValueAgent
 
 DO_ANIM = not True
@@ -57,16 +56,26 @@ norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 X_POS_INIT = N_grid//2
 Y_POS_INIT = N_grid//2
 
-# initialize agents
-random_agent = RandomAgent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT)
-max_agent = MaxAgent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT)
-ssv_agent = SeekSpecificValueAgent(x_pos_init=X_POS_INIT, y_pos_init=Y_POS_INIT,specific_value=1)
+# initialize agents with random positions
+random_agent = RandomAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1))
+max_agent = MaxAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1))
+ssv_agent = SeekSpecificValueAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1),specific_value=1)
 agents = [random_agent, max_agent, ssv_agent]
 
-sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=N_runs)
+
+# generate initial grid
+# run the sandpile 1000 times
+initial_grid_N = 1000
+print('Generating initial grid')
+initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
+print('initial grid')
+print(initial_grid)
 
 
+# start new sandpile with initial grid
+sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=N_runs)
 
+# input()
 def init():
     """initialize animation"""
     img = axs.imshow(sandpile.grid,cmap=cmap,norm=norm, origin="lower")

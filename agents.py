@@ -59,7 +59,6 @@ class Agent():
     # the edge of the board
     def get_possible_moves_stay_in_grid(self, sandpile):
         possible_moves = list(Directions)
-        # possible_moves = [Directions.STAY, Directions.LEFT, Directions.RIGHT, Directions.UP, Directions.DOWN]
 
         if self.x_pos <= sandpile.left_bound_idx:
             possible_moves.remove(Directions.LEFT)
