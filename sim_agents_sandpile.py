@@ -5,10 +5,10 @@ from matplotlib import animation
 import matplotlib as mpl
 
 from sandpile import Sandpile, run_sandpile_alone
-from agents import RandomAgent, MaxAgent, SeekSpecificValueAgent
+from agents import RandomAgent, MaxAgent, SeekSpecificValueAgent, SeekCenterAgent
 
 DO_ANIM = not True
-N_grid = 10 #number of cells per side
+N_grid = 5 #number of cells per side
 # N_tick_step = 5
 N_tick_step = 1
 
@@ -59,7 +59,9 @@ Y_POS_INIT = N_grid//2
 random_agent = RandomAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1))
 max_agent = MaxAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1))
 ssv_agent = SeekSpecificValueAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1),specific_value=1)
-agents = [random_agent, max_agent, ssv_agent]
+center_agent = SeekCenterAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1))
+
+agents = [random_agent, max_agent, ssv_agent, center_agent]
 
 
 # generate initial grid
@@ -109,11 +111,13 @@ else:
 print('cumulative random_agent score: ', random_agent.cumulative_score)
 print('cumulative max_agent score: ', max_agent.cumulative_score)
 print('cumulative ssv_agent score: ', ssv_agent.cumulative_score)
+print('cumulative center_agent score: ', center_agent.cumulative_score)
 
 fig_rewards, axs_rewards = plt.subplots(2,1)
 axs_rewards[0].plot(random_agent.rewards,color='r',marker='o',label='Random Agent')
 axs_rewards[0].plot(max_agent.rewards,color='b',marker='o',label='Max Agent')
 axs_rewards[0].plot(ssv_agent.rewards,color='g',marker='o',label='SSV Agent')
+axs_rewards[0].plot(center_agent.rewards,color='k',marker='o',label='Center Agent')
 axs_rewards[0].legend()
 axs_rewards[0].set_ylabel('Rewards')
 axs_rewards[0].set_ylim(bottom=-1, top = 5)
@@ -121,6 +125,7 @@ axs_rewards[0].set_ylim(bottom=-1, top = 5)
 axs_rewards[1].plot(random_agent.cumulative_rewards,color='r',marker='o')
 axs_rewards[1].plot(max_agent.cumulative_rewards,color='b',marker='o')
 axs_rewards[1].plot(ssv_agent.cumulative_rewards,color='g',marker='o',label='SSV Agent')
+axs_rewards[1].plot(center_agent.cumulative_rewards,color='k',marker='o',label='Center Agent')
 
 
 axs_rewards[1].set_ylabel('Cumulative Rewards')
@@ -137,6 +142,7 @@ fig_hist, axs_hist = plt.subplots(2,1)
 axs_hist[0].hist(avalanche_sizes,bins=bins, density=True)
 axs_hist[1].loglog(x_recon[:-1],hist_vals,color='r',marker='o')
 
+## TODO: add plotting of robot path
 # img = axs.imshow(grid)
 plt.show()
 

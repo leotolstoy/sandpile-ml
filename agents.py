@@ -159,7 +159,6 @@ class SeekSpecificValueAgent(Agent):
         random.shuffle(possible_moves)
 
         # evaluate possible moves based on targeted value
-        prewards = []
         moves_to_value = []
         for pmove in possible_moves:
             new_x_pos, new_y_pos = get_new_pos_from_direction(pmove, self.x_pos, self.y_pos)
@@ -175,3 +174,39 @@ class SeekSpecificValueAgent(Agent):
 
         self.moves.append(move)
         return move
+
+class SeekCenterAgent(Agent):
+    # This agent chooses to move to the center of the sandpile
+
+    def __init__(self, x_pos_init=0, y_pos_init=0):
+        super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
+
+    def choose_move(self, sandpile):
+        # chooses the move to go to the center
+        
+        possible_moves = self.get_possible_moves_stay_in_grid(sandpile)
+
+        # shuffle possible moves, this is done because in the event of 
+        # an eventual tie between the specific values, numpy only returns the 
+        # first index, so we want to avoid bias based on which Direction
+        # is listed first
+        random.shuffle(possible_moves)
+
+        # compute center position
+        center_pos = ((sandpile.N_grid-1)//2, (sandpile.N_grid-1)//2)
+
+        # evaluate moves based on distance to center
+        # the the best move is the one that minimizes the distance to the center
+        smallest_dist_to_center = 999999
+        best_move = Directions.STAY
+        for pmove in possible_moves:
+            new_x_pos, new_y_pos = get_new_pos_from_direction(pmove, self.x_pos, self.y_pos)
+
+            dist = np.sqrt((center_pos[0] - new_x_pos)**2 + (center_pos[1] - new_y_pos)**2)
+
+            if dist < smallest_dist_to_center:
+                smallest_dist_to_center = dist
+                best_move = pmove
+
+        self.moves.append(best_move)
+        return best_move
