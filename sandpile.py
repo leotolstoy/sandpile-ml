@@ -4,9 +4,14 @@ from util import Directions
 
 class Sandpile():
 
-    def __init__(self,N_grid=2, MAXIMUM_GRAINS=4, agents=[], DROP_SAND=True, MAX_STEPS=1000):
+    def __init__(self,N_grid=2, initial_grid=None, MAXIMUM_GRAINS=4, agents=[], DROP_SAND=True, MAX_STEPS=1000):
 
-        self.grid = np.zeros((N_grid, N_grid))
+        # allow for initial grid configuration
+        if initial_grid is not None:
+            self.grid = initial_grid
+            assert(initial_grid.shape[0]==N_grid and initial_grid.shape[1]==N_grid)
+        else:
+            self.grid = np.zeros((N_grid, N_grid))
 
         self.N_grid = N_grid
         # self.left_bound_idx = 0 + 1

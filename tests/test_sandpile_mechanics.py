@@ -290,16 +290,39 @@ class TestSandpileMechanics(unittest.TestCase):
 
         self.assertNotEqual(agent.get_agent_pos(), (Y_POS, X_POS))
 
+    def test_initial_grid_correctly_used(self,):
+        # define initial grid
+        initial_grid = np.random.rand(self.N_grid, self.N_grid)
+        sandpile = Sandpile(N_grid=self.N_grid, initial_grid=initial_grid)
+
+        arraysEqual = np.array_equal(initial_grid, sandpile.get_sandpile())
+        self.assertTrue(arraysEqual)
+
+    def test_initial_grid_not_square_raises_exception(self,):
+        # define initial grid that is not square
+        initial_grid = np.random.rand(self.N_grid, self.N_grid+1)
+
+        with self.assertRaises(AssertionError) as cm:
+            sandpile=Sandpile(N_grid=self.N_grid, initial_grid=initial_grid)
+
+        e = cm.exception
+        self.assertEqual(AssertionError, e.__class__)
+
+
+
+
 
 def suite():
     suite = unittest.TestSuite()
-    # suite.addTest(TestSandpileMechanics('test_sandgrain_drop_at_location'))
-    # suite.addTest(TestSandpileMechanics('test_drop_on_maxgrains_causes_avalanche'))
-    # suite.addTest(TestSandpileMechanics('test_avalanche_size_recorded_properly'))
-    # suite.addTest(TestSandpileMechanics('test_avalanche_at_side_loses_grains'))
-    # suite.addTest(TestSandpileMechanics('test_avalanche_at_corner_loses_grains'))
-    # suite.addTest(TestSandpileMechanics('test_two_avalanches_recorded_properly'))
+    suite.addTest(TestSandpileMechanics('test_sandgrain_drop_at_location'))
+    suite.addTest(TestSandpileMechanics('test_drop_on_maxgrains_causes_avalanche'))
+    suite.addTest(TestSandpileMechanics('test_avalanche_size_recorded_properly'))
+    suite.addTest(TestSandpileMechanics('test_avalanche_at_side_loses_grains'))
+    suite.addTest(TestSandpileMechanics('test_avalanche_at_corner_loses_grains'))
+    suite.addTest(TestSandpileMechanics('test_two_avalanches_recorded_properly'))
     suite.addTest(TestSandpileMechanics('test_avalanche_moves_agent'))   
+    suite.addTest(TestSandpileMechanics('test_initial_grid_correctly_used'))
+    suite.addTest(TestSandpileMechanics('test_initial_grid_not_square_raises_exception'))
     
     return suite
 
