@@ -132,6 +132,20 @@ print('N Moves Quantiles: ', center_agent_nmoves_quantiles)
 
 n_bins = 20
 fig_rewards, axs_rewards = plt.subplots(2,1)
+# axs_rewards[0].hist(np.log10(random_agent_cumulative_scores),color='r',label='Random Agent',alpha=0.3,bins=n_bins)
+# axs_rewards[0].hist(np.log10(max_agent_cumulative_scores),color='b',label='Max Agent',alpha=0.3,bins=n_bins)
+# # axs_rewards[0].hist(np.log10(ssv_agent_cumulative_scores),color='g',label='SSV Agent',alpha=0.3,bins=n_bins)
+# axs_rewards[0].hist(np.log10(center_agent_cumulative_scores),color='k',label='Center Agent',alpha=0.3,bins=n_bins)
+
+# axs_rewards[0].legend()
+# axs_rewards[0].set_xlabel('Cumulative Rewards')
+
+# axs_rewards[1].hist(np.log10(random_agent_nmoves),color='r',label='Random Agent',alpha=0.3,bins=n_bins)
+# axs_rewards[1].hist(np.log10(max_agent_nmoves),color='b',label='Max Agent',alpha=0.3,bins=n_bins)
+# # axs_rewards[1].hist(np.log10(ssv_agent_nmoves),color='g',label='SSV Agent',alpha=0.3,bins=n_bins)
+# axs_rewards[1].hist(np.log10(center_agent_nmoves),color='k',label='Center Agent',alpha=0.3,bins=n_bins)
+
+
 axs_rewards[0].hist(random_agent_cumulative_scores,color='r',label='Random Agent',alpha=0.3,bins=n_bins)
 axs_rewards[0].hist(max_agent_cumulative_scores,color='b',label='Max Agent',alpha=0.3,bins=n_bins)
 # axs_rewards[0].hist(ssv_agent_cumulative_scores,color='g',label='SSV Agent',alpha=0.3,bins=n_bins)
