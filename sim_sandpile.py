@@ -14,7 +14,7 @@ N_grid = 20 #number of cells per side
 N_tick_step = 1
 
 MAXIMUM_GRAINS = 4
-N_runs = 10000
+N_runs = 20*20*4#10000
 frames = N_runs
 I = 0
 fig = plt.figure()
@@ -86,6 +86,9 @@ else:
     for i in range(N_runs):
         print(i)
         sandpile.step()
+
+#print final grid
+sandpile.print_grid()
 
 # get avalance sizes
 avalanche_sizes = np.array(sandpile.avalanche_sizes)
