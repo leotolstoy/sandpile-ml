@@ -9,7 +9,7 @@ from util import Directions
 from sandpile import Sandpile
 
 DO_ANIM = not True
-N_grid = 5 #number of cells per side
+N_grid = 20 #number of cells per side
 # N_tick_step = 5
 N_tick_step = 1
 

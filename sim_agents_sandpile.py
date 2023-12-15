@@ -8,7 +8,7 @@ from sandpile import Sandpile, run_sandpile_alone
 from agents import RandomAgent, MaxAgent, SeekSpecificValueAgent, SeekCenterAgent
 
 DO_ANIM = not True
-N_grid = 5 #number of cells per side
+N_grid = 10 #number of cells per side
 # N_tick_step = 5
 N_tick_step = 1
 
@@ -142,7 +142,7 @@ fig_hist, axs_hist = plt.subplots(2,1)
 axs_hist[0].hist(avalanche_sizes,bins=bins, density=True)
 axs_hist[1].loglog(x_recon[:-1],hist_vals,color='r',marker='o')
 
-## TODO: add plotting of robot path
+## TODO: add plotting of agent path
 # img = axs.imshow(grid)
 plt.show()
 

@@ -49,64 +49,43 @@ class Sandpile():
             return game_is_running
 
         self.iteration += 1
+        self.avalanche_size = 0
 
-        # determine if we should avalanche, based on if any of the grid values
-        # are greater than the alloweable maximum grain number
+        # run the agents
+        for agent in self.agents:
+            if agent.is_in_game():
+                
+                # print('agent_pos (i,j) (Y, X): ', agent.get_agent_pos())
+                # print('Moving agent')
+                # have the agent choose a direction to move in
+                direction = agent.choose_move(self)
+                agent.move_agent_in_direction(direction)
+                agent.set_is_getting_avalanched(False)
+
+        if self.DROP_SAND:
+            self.drop_sandgrain_randomly()
+
+        #update avalanchine state
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
-        
-        # update the sandpile environment
-        if not self.is_avalanching:
-            # print('NOT AVALANCHING')
 
-            # run the agents and get rewards
-            for agent in self.agents:
-                if agent.is_in_game():
-                    
-                    # print('agent_pos (i,j) (Y, X): ', agent.get_agent_pos())
-                    # print('Moving agent')
-                    # have the agent choose a direction to move in
-                    direction = agent.choose_move(self)
-                    agent.move_agent_in_direction(direction)
-
-                    # print('agent_pos after normal move (i,j) (Y, X): ', agent.get_agent_pos())
-
-                    if self.check_agent_is_in_grid(agent):
-                        y_pos, x_pos = agent.get_agent_pos()
-                        reward = self.grid[y_pos, x_pos]
-                        # print('REWARD FOR MOVE: ', reward)
-                        agent.append_reward(reward)
-
-                    # else: # agent not in grid, remove it from game
-                        # print('REWARD FOR OFF GRID')
-
-                        # reset agent reward to zero
-                        # agent.append_reward(-agent.get_cumulative_score())
-                        # agent.append_reward(0)
-
-                        # agent.remove_agent_from_game()
-                        # print('REMOVING AGENT FROM GAME')
-                    # print('rewards: ', self.agent.rewards)
-                    # print('cumulative_score: ', self.agent.cumulative_score)
-                    # print('cumulative_rewards:', self.agent.cumulative_rewards)
-
-            if self.DROP_SAND:
-                self.drop_sandgrain_randomly()
-            
-            # handle state transition from avalanching to not avalanching
-            # this records the avalanche size
-            if self.was_avalanching_before:
-                self.avalanche_sizes.append(self.avalanche_size)
-                self.was_avalanching_before = False
-                self.avalanche_size = 0
-                # print(self.avalanche_sizes)
-
-        else: # if avalanching
+        # avalanche 
+        while self.is_avalanching:
             self.avalanche()
             self.avalanche_size += 1
-            self.was_avalanching_before = True
 
-        # get agent rewards based on position
-        
+        # update avalanche sizes
+        if self.avalanche_size > 0:
+            self.avalanche_sizes.append(self.avalanche_size)
+            # print(self.avalanche_sizes)
+
+        # update agent rewards
+        for agent in self.agents:
+            if agent.is_in_game() and not agent.get_is_getting_avalanched():
+                y_pos, x_pos = agent.get_agent_pos()
+                reward = self.grid[y_pos, x_pos]
+                # print('REWARD FOR MOVE: ', reward)
+                agent.append_reward(reward)
+
 
         # input()
         return game_is_running
@@ -180,7 +159,13 @@ class Sandpile():
                 
                 # print('moving agent due to avalanche')
                 agent.move_agent_random_from_point()
+
+                # if the agent was avalanched, subtract a point
+                agent.append_reward(-1)
                 
+                #update agent is_getting_avalanched
+                agent.set_is_getting_avalanched(True)
+
                 # print('agent pos after avalanche (i,j) (Y, X)', agent.get_agent_pos())
                 # self.print_agent_pos_on_grid(agent)
                 # input()
@@ -191,16 +176,9 @@ class Sandpile():
                     # print('REMOVING AGENT FROM GAME FROM AVALANCHE')
         # input()
 
+        # update avalanching state
+        self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
         
-        
-        # # check if agent is still in game
-        # for agent in self.agents:
-        #     if not self.check_agent_is_in_grid(agent):
-        #         agent.remove_agent_from_game()
-        #         print('REMOVING AGENT FROM GAME FROM AVALANCHE')
-
-
-       
         # print(self.grid)
 
         # input()
@@ -218,10 +196,6 @@ class Sandpile():
 
         if (y_coord + 1) <= self.bot_bound_idx:
             self.grid[y_coord + 1, x_coord] += 1
-
-    #returns the part of the grid that contains the sand
-    # def get_sandpile(self,):
-    #     return self.grid[1:self.N_grid+1, 1:self.N_grid+1]
 
     def get_sandpile(self,):
         return self.grid

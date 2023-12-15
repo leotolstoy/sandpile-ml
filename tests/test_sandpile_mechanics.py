@@ -12,7 +12,7 @@ class TestSandpileMechanics(unittest.TestCase):
         #middle position
         self.N_grid = 5 #number of cells per side
         
-    def setup_sandpile_grid(self, N_grid, max_grains=4):
+    def setup_sandpile_grid_no_agent(self, N_grid, max_grains=4):
         DROP_SAND=False
         sandpile = Sandpile(N_grid=N_grid, DROP_SAND=DROP_SAND, MAXIMUM_GRAINS=max_grains)
         return sandpile
@@ -22,7 +22,7 @@ class TestSandpileMechanics(unittest.TestCase):
         X_POS = self.N_grid//2
         Y_POS = self.N_grid//2
         
-        sandpile = self.setup_sandpile_grid(self.N_grid)
+        sandpile = self.setup_sandpile_grid_no_agent(self.N_grid)
 
         sandpile.print_grid()
 
@@ -42,7 +42,7 @@ class TestSandpileMechanics(unittest.TestCase):
 
         # set up sandpile at avalanche conditions
         max_grains = 4
-        sandpile = self.setup_sandpile_grid(self.N_grid, max_grains=max_grains)
+        sandpile = self.setup_sandpile_grid_no_agent(self.N_grid, max_grains=max_grains)
 
         # define sandpile scenario
         # [[0. 0. 0. 0. 0.]
@@ -85,7 +85,7 @@ class TestSandpileMechanics(unittest.TestCase):
 
         # set up sandpile at avalanche conditions
         max_grains = 4
-        sandpile = self.setup_sandpile_grid(self.N_grid, max_grains=max_grains)
+        sandpile = self.setup_sandpile_grid_no_agent(self.N_grid, max_grains=max_grains)
 
         # define sandpile scenario
         # [[0. 0. 0. 0. 0.]
@@ -102,16 +102,9 @@ class TestSandpileMechanics(unittest.TestCase):
 
         EXPECTED_AVALANCHE_SIZE = 1
 
-        #step, which should avalanche
         sandpile.step()
 
         print(sandpile.avalanche_sizes)
-        self.assertTrue(sandpile.is_avalanching)
-
-        #step again, which should stop avalanching
-        print('NEXT STEP')
-        sandpile.step()
-        self.assertFalse(sandpile.is_avalanching)
 
         self.assertEqual(EXPECTED_AVALANCHE_SIZE, sandpile.avalanche_sizes[0])
 
@@ -119,7 +112,7 @@ class TestSandpileMechanics(unittest.TestCase):
 
         # set up sandpile at avalanche conditions
         max_grains = 4
-        sandpile = self.setup_sandpile_grid(self.N_grid, max_grains=max_grains)
+        sandpile = self.setup_sandpile_grid_no_agent(self.N_grid, max_grains=max_grains)
 
         # define sandpile scenario, at left edge
         # [[0. 0. 0. 0. 0.]
@@ -138,7 +131,6 @@ class TestSandpileMechanics(unittest.TestCase):
         sandpile.step()
 
         print(sandpile.avalanche_sizes)
-        self.assertTrue(sandpile.is_avalanching)
 
         # define expected grid
         # [[0. 0. 0. 0. 0.]
@@ -162,7 +154,7 @@ class TestSandpileMechanics(unittest.TestCase):
 
         # set up sandpile at avalanche conditions
         max_grains = 4
-        sandpile = self.setup_sandpile_grid(self.N_grid, max_grains=max_grains)
+        sandpile = self.setup_sandpile_grid_no_agent(self.N_grid, max_grains=max_grains)
 
         # define sandpile scenario, at top left corner
         # [[4. 0. 0. 0. 0.]
@@ -181,7 +173,6 @@ class TestSandpileMechanics(unittest.TestCase):
         sandpile.step()
 
         print(sandpile.avalanche_sizes)
-        self.assertTrue(sandpile.is_avalanching)
 
         # define expected grid
         # [[0. 1. 0. 0. 0.]
@@ -204,7 +195,7 @@ class TestSandpileMechanics(unittest.TestCase):
 
         # set up sandpile at avalanche conditions
         max_grains = 4
-        sandpile = self.setup_sandpile_grid(self.N_grid, max_grains=max_grains)
+        sandpile = self.setup_sandpile_grid_no_agent(self.N_grid, max_grains=max_grains)
 
         # define sandpile scenario
         # [[0. 0. 0. 0. 0.]
@@ -238,16 +229,8 @@ class TestSandpileMechanics(unittest.TestCase):
         print('expected grid')
         print(EXPECTED_GRID)
 
-        #step twice, should avalanche twice
+        #step which should avalanche twice
         sandpile.step()
-        self.assertTrue(sandpile.is_avalanching)
-        sandpile.step()
-        self.assertTrue(sandpile.is_avalanching)
-
-        #step again, which should stop avalanching
-        print('NEXT STEP')
-        sandpile.step()
-        self.assertFalse(sandpile.is_avalanching)
 
         arraysEqual = np.array_equal(EXPECTED_GRID, sandpile.get_sandpile())
         sandpile.print_grid()
@@ -286,7 +269,6 @@ class TestSandpileMechanics(unittest.TestCase):
         print(agent.get_agent_pos())
         sandpile.print_grid_and_agent_pos(agent)
 
-        self.assertTrue(sandpile.is_avalanching)
 
         self.assertNotEqual(agent.get_agent_pos(), (Y_POS, X_POS))
 

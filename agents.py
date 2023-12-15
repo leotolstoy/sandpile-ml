@@ -14,6 +14,7 @@ class Agent():
         self.rewards = []
         self.cumulative_rewards = []
         self.in_game = True
+        self.is_getting_avalanched = False
 
 
     def choose_move(self, sandpile):
@@ -77,6 +78,12 @@ class Agent():
             possible_moves.remove(Directions.DOWN)
 
         return possible_moves
+    
+    def get_is_getting_avalanched(self,):
+        return self.is_getting_avalanched
+
+    def set_is_getting_avalanched(self, is_getting_avalanched):
+        self.is_getting_avalanched = is_getting_avalanched
 
 
 class RandomAgent(Agent):
