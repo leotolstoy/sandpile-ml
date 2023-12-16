@@ -3,24 +3,24 @@ import torch
 class SaveBestModel:
     """
     Class to save the best model while training. If the current epoch's 
-    validation loss is less than the previous least less, then save the
+    validation score is greater than the previous best score, then save the
     model state.
     """
-    def __init__(self, path, best_valid_loss=float('inf')):
+    def __init__(self, path, best_valid_score=-float('inf')):
         self.path = path
-        self.best_valid_loss = best_valid_loss
+        self.best_valid_score = best_valid_score
         
     def __call__(
-        self, current_valid_loss, 
-        epoch, model, optimizer, loss_fcn
+        self, current_valid_score, 
+        episode_i, model, optimizer
     ):
-        if current_valid_loss < self.best_valid_loss:
-            self.best_valid_loss = current_valid_loss
-            print(f"\nBest validation loss: {self.best_valid_loss}")
-            print(f"\nSaving best model for epoch: {epoch}\n")
+        if current_valid_score > self.best_valid_score:
+            self.best_valid_score = current_valid_score
+            print(f"\nBest validation loss: {self.best_valid_score}")
+            print(f"\nSaving best model for episode: {episode_i}\n")
             torch.save({
-                'epoch': epoch,
+                'episode': episode_i,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-                'loss': current_valid_loss,
+                'loss': current_valid_score,
                 }, self.path)

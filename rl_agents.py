@@ -47,10 +47,14 @@ class RLPolicyAgent(Agent):
     def __init__(self, rl_policy, x_pos_init=0, y_pos_init=0):
         super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
         self.rl_policy = rl_policy
+        self.log_prob = None
+        self.action_idx = None
 
     def choose_move(self, sandpile):
         action_idx, log_prob = self.rl_policy.select_action(sandpile)
-
+        self.action_idx = action_idx
+        self.log_prob = log_prob
         move = Directions[action_idx]
+        self.moves.append(move)
         
         return move
