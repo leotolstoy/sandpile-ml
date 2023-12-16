@@ -51,6 +51,8 @@ class Sandpile():
         self.iteration += 1
         self.avalanche_size = 0
 
+        agent_rewards = []
+
         # run the agents
         for agent in self.agents:
             if agent.is_in_game():
@@ -85,10 +87,12 @@ class Sandpile():
                 reward = self.grid[y_pos, x_pos]
                 # print('REWARD FOR MOVE: ', reward)
                 agent.append_reward(reward)
-
+                agent_rewards.append(reward)
+            else:
+                agent_rewards.append(-100)
 
         # input()
-        return game_is_running
+        return self.grid, agent_rewards, game_is_running
     
     
     def check_agent_is_in_grid(self, agent):

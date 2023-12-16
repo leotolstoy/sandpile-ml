@@ -4,6 +4,8 @@ from torch import nn, Tensor
 import numpy as np
 import torch.nn.functional as F
 from torch.distributions import Categorical
+from agents import Agent
+from util import Directions
 
 class Policy(nn.Module):
     def __init__(self, input_dim, num_hidden_layers, hidden_dim, output_dim):
@@ -31,9 +33,24 @@ class Policy(nn.Module):
         
 
     def select_action(self, sandpile):
-        sandpile_tensor = torch.from_numpy(sandpile).reshape(-1).float()
+        sandpile_tensor = torch.from_numpy(sandpile.reshape(-1)).float()
         probs = self.forward(sandpile_tensor).cpu()
         m = Categorical(probs)
         action = m.sample()
-        return action.item(), m.log_prob(action
-                                         )
+        return action.item(), m.log_prob(action)
+    
+
+
+class RLPolicyAgent(Agent):
+    # This agent uses an RL based policy to choose how to move
+
+    def __init__(self, rl_policy, x_pos_init=0, y_pos_init=0):
+        super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
+        self.rl_policy = rl_policy
+
+    def choose_move(self, sandpile):
+        action_idx, log_prob = self.rl_policy.select_action(sandpile)
+
+        move = Directions[action_idx]
+        
+        return move

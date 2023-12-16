@@ -112,7 +112,8 @@ else:
     while game_is_running:
         print(i)
         i+=1
-        game_is_running = sandpile.step()
+        sandpile_grid, agent_rewards, game_is_running = sandpile.step()
+        print(agent_rewards)
 
         random_agent_pos.append([random_agent.x_pos, random_agent.y_pos])
         max_agent_pos.append([max_agent.x_pos, max_agent.y_pos])
