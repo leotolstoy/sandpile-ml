@@ -50,7 +50,7 @@ class Agent():
         self.move_agent_to_point(new_agent_x_pos, new_agent_y_pos)
 
     
-    # add reward to list of rewards
+    # add reward to list of rewards for each step
     def append_reward(self, reward):
         self.rewards.append(reward)
         self.cumulative_rewards = np.cumsum(np.array(self.rewards))
@@ -220,7 +220,7 @@ class RLPolicyAgent(Agent):
         action_idx, log_prob = self.rl_policy.select_action(sandpile)
         self.action_idx = action_idx
         self.log_prob = log_prob
-        move = Directions[action_idx]
+        move = list(Directions)[action_idx]
         self.moves.append(move)
         
         return move

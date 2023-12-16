@@ -28,13 +28,18 @@ class Policy(nn.Module):
             x = layer(x)
             
         action_scores = self.output_layer(x)
-        return F.softmax(action_scores, dim=1)
+        return F.softmax(action_scores, dim=-1)
         
 
     def select_action(self, sandpile):
         sandpile_tensor = torch.from_numpy(sandpile.grid.reshape(-1)).float().to(self.device)
         probs = self.forward(sandpile_tensor)
+        # print('probs: ', probs)
+
         m = Categorical(probs)
+        # print('m: ', m)
+
         action = m.sample()
+        # print('action: ', action)
         return action.item(), m.log_prob(action)
     

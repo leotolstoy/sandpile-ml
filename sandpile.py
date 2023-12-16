@@ -33,36 +33,49 @@ class Sandpile():
         self.agents = agents
         self.MAX_STEPS = MAX_STEPS
         self.iteration = 0
+        self.agent_rewards = []
 
     def step(self,):
         #check that the game is still running
         iterations_not_exceeded = self.iteration < self.MAX_STEPS
 
-        # establish that at least one agent is in the game, or if no agents were initialized
-        # set this to true so that we can keep looping
-        at_least_one_agent_in_game = False or len(self.agents) == 0
-        for agent in self.agents:
-            at_least_one_agent_in_game = at_least_one_agent_in_game or agent.is_in_game()
+        # # establish that at least one agent is in the game, or if no agents were initialized
+        # # set this to true so that we can keep looping
+        # at_least_one_agent_in_game = False or len(self.agents) == 0
+        # for agent in self.agents:
+        #     at_least_one_agent_in_game = at_least_one_agent_in_game or agent.is_in_game()
 
-        game_is_running = iterations_not_exceeded and at_least_one_agent_in_game
-        if not game_is_running:
-            return game_is_running
+        # game_is_running = iterations_not_exceeded and at_least_one_agent_in_game
+        
+        # if not game_is_running:
+        #     print('Ending game')
+        #     return self.grid, self.agent_rewards, game_is_running
 
-        self.iteration += 1
+        # self.iteration += 1
         self.avalanche_size = 0
+        
 
-        agent_rewards = []
+        
 
         # run the agents
-        for agent in self.agents:
+        agent_rewards_step = [0] * len(self.agents)
+        for i, agent in enumerate(self.agents):
+            
             if agent.is_in_game():
                 
                 # print('agent_pos (i,j) (Y, X): ', agent.get_agent_pos())
-                # print('Moving agent')
+                print('Moving agent')
                 # have the agent choose a direction to move in
                 direction = agent.choose_move(self)
+                print('move: ', direction)
+                
                 agent.move_agent_in_direction(direction)
                 agent.set_is_getting_avalanched(False)
+
+            # check agent position 
+            if not self.check_agent_is_in_grid(agent):
+                agent.remove_agent_from_game()
+                # agent_rewards_step[i] -= 100
 
         if self.DROP_SAND:
             self.drop_sandgrain_randomly()
@@ -81,18 +94,47 @@ class Sandpile():
             # print(self.avalanche_sizes)
 
         # update agent rewards
-        for agent in self.agents:
+        for i, agent in enumerate(self.agents):
             if agent.is_in_game() and not agent.get_is_getting_avalanched():
                 y_pos, x_pos = agent.get_agent_pos()
-                reward = self.grid[y_pos, x_pos]
+                grid_reward = self.grid[y_pos, x_pos]
                 # print('REWARD FOR MOVE: ', reward)
-                agent.append_reward(reward)
-                agent_rewards.append(reward)
+                # agent.append_reward(reward)
+                agent_rewards_step[i] += grid_reward
+
+            elif agent.is_in_game() and agent.get_is_getting_avalanched():
+                agent_rewards_step[i] -= self.avalanche_size
+                # self.agent_rewards.append(reward)
             else:
-                agent_rewards.append(-100)
+                # self.agent_rewards.append(-100)
+                agent_rewards_step[i] -= 100
+                pass
+
+            agent.append_reward(agent_rewards_step[i])
+
+
+        # establish that at least one agent is in the game, or if no agents were initialized
+        # set this to true so that we can keep looping
+        at_least_one_agent_in_game = False or len(self.agents) == 0
+        for agent in self.agents:
+            at_least_one_agent_in_game = at_least_one_agent_in_game or agent.is_in_game()
+
+        game_is_running = iterations_not_exceeded and at_least_one_agent_in_game
+        
+        if not game_is_running:
+            print('Ending game')
+            # return self.grid, self.agent_rewards, game_is_running
+
+        self.iteration += 1
 
         # input()
-        return self.grid, agent_rewards, game_is_running
+
+
+
+        # print(self.grid)
+        # print(agent_rewards_step)
+        # print(game_is_running)
+        return self.grid, agent_rewards_step, game_is_running
     
     
     def check_agent_is_in_grid(self, agent):
