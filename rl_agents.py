@@ -6,8 +6,9 @@ import torch.nn.functional as F
 from torch.distributions import Categorical
 
 class Policy(nn.Module):
-    def __init__(self, input_dim, num_hidden_layers, hidden_dim, output_dim):
+    def __init__(self, input_dim, num_hidden_layers, hidden_dim, output_dim, device):
         super().__init__()
+        self.device = device
         
         self.input_dim = input_dim
         self.hidden_layers = nn.ModuleList()
@@ -31,12 +32,9 @@ class Policy(nn.Module):
         
 
     def select_action(self, sandpile):
-        sandpile_tensor = torch.from_numpy(sandpile.reshape(-1)).float()
-        probs = self.forward(sandpile_tensor).cpu()
+        sandpile_tensor = torch.from_numpy(sandpile.grid.reshape(-1)).float().to(self.device)
+        probs = self.forward(sandpile_tensor)
         m = Categorical(probs)
         action = m.sample()
         return action.item(), m.log_prob(action)
     
-    def test_func(self,):
-        print('fdsfd')
-  
