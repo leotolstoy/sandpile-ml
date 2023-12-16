@@ -13,7 +13,7 @@ N_grid = 10 #number of cells per side
 N_tick_step = 1
 
 MAXIMUM_GRAINS = 4
-N_runs = 10000
+N_runs = 1000
 frames = N_runs
 I = 0
 fig = plt.figure()
@@ -107,8 +107,7 @@ if DO_ANIM:
 
 else:
     i = 0
-    game_is_running = sandpile.step()
-    i+=1
+    game_is_running = True
     while game_is_running:
         print(i)
         i+=1

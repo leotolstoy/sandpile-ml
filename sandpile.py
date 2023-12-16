@@ -36,8 +36,7 @@ class Sandpile():
         self.agent_rewards = []
 
     def step(self,):
-        #check that the game is still running
-        iterations_not_exceeded = self.iteration < self.MAX_STEPS
+        
 
         # # establish that at least one agent is in the game, or if no agents were initialized
         # # set this to true so that we can keep looping
@@ -57,8 +56,8 @@ class Sandpile():
 
         
 
-        # run the agents
-        agent_rewards_step = [0] * len(self.agents)
+        # preallocate agent rewards
+        self.agent_rewards_step = [0] * len(self.agents)
         for i, agent in enumerate(self.agents):
             
             if agent.is_in_game():
@@ -73,8 +72,11 @@ class Sandpile():
                 agent.set_is_getting_avalanched(False)
 
             # check agent position 
-            if not self.check_agent_is_in_grid(agent):
+            if agent.is_in_game() and not self.check_agent_is_in_grid(agent):
                 agent.remove_agent_from_game()
+                self.agent_rewards_step[i] = -agent.get_cumulative_score()
+                # agent.append_reward(-agent.get_cumulative_score())
+                agent.append_reward(0)
                 # agent_rewards_step[i] -= 100
 
         if self.DROP_SAND:
@@ -95,23 +97,28 @@ class Sandpile():
 
         # update agent rewards
         for i, agent in enumerate(self.agents):
-            if agent.is_in_game() and not agent.get_is_getting_avalanched():
-                y_pos, x_pos = agent.get_agent_pos()
-                grid_reward = self.grid[y_pos, x_pos]
-                # print('REWARD FOR MOVE: ', reward)
-                # agent.append_reward(reward)
-                agent_rewards_step[i] += grid_reward
+            if agent.is_in_game():
+                if not agent.get_is_getting_avalanched():
+                    y_pos, x_pos = agent.get_agent_pos()
+                    grid_reward = self.grid[y_pos, x_pos]
+                    # print('REWARD FOR MOVE: ', reward)
+                    # agent.append_reward(reward)
+                    self.agent_rewards_step[i] += grid_reward
 
-            elif agent.is_in_game() and agent.get_is_getting_avalanched():
-                agent_rewards_step[i] -= self.avalanche_size
-                # self.agent_rewards.append(reward)
+                elif agent.get_is_getting_avalanched():
+                    # self.agent_rewards_step[i] -= self.avalanche_size
+                    pass
+
+                agent.append_reward(self.agent_rewards_step[i])
+                    # self.agent_rewards.append(reward)
             else:
                 # self.agent_rewards.append(-100)
-                agent_rewards_step[i] -= 100
+                self.agent_rewards_step[i] = -agent.get_cumulative_score()
                 pass
 
-            agent.append_reward(agent_rewards_step[i])
+            
 
+        self.iteration += 1
 
         # establish that at least one agent is in the game, or if no agents were initialized
         # set this to true so that we can keep looping
@@ -119,6 +126,8 @@ class Sandpile():
         for agent in self.agents:
             at_least_one_agent_in_game = at_least_one_agent_in_game or agent.is_in_game()
 
+        #check that the game is still running
+        iterations_not_exceeded = self.iteration < self.MAX_STEPS
         game_is_running = iterations_not_exceeded and at_least_one_agent_in_game
         
         if not game_is_running:
@@ -126,7 +135,7 @@ class Sandpile():
             pass
             # return self.grid, self.agent_rewards, game_is_running
 
-        self.iteration += 1
+        
 
         # input()
 
@@ -135,7 +144,7 @@ class Sandpile():
         # print(self.grid)
         # print(agent_rewards_step)
         # print(game_is_running)
-        return self.grid, agent_rewards_step, game_is_running
+        return self.grid, self.agent_rewards_step, game_is_running
     
     
     def check_agent_is_in_grid(self, agent):
@@ -197,7 +206,7 @@ class Sandpile():
         # self.print_grid()
 
         # move the agent to one of the neighbors if the agent was at the unstable coordinate
-        for agent in self.agents:
+        for i, agent in enumerate(self.agents):
             # check if agent is at the coordinate
             if agent.is_in_game():
                 agent_is_at_unstable_pos = agent.agent_is_at_pos(x_coord_unstable, y_coord_unstable)
@@ -208,7 +217,7 @@ class Sandpile():
                 agent.move_agent_random_from_point()
 
                 # if the agent was avalanched, subtract a point
-                agent.append_reward(-1)
+                self.agent_rewards_step[i] -= 1
                 
                 #update agent is_getting_avalanched
                 agent.set_is_getting_avalanched(True)
@@ -220,6 +229,8 @@ class Sandpile():
                 # check if agent is still in game
                 if not self.check_agent_is_in_grid(agent):
                     agent.remove_agent_from_game()
+                    # agent.append_reward(-agent.get_cumulative_score())
+                    agent.append_reward(0)
                     # print('REMOVING AGENT FROM GAME FROM AVALANCHE')
         # input()
 

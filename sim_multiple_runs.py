@@ -5,7 +5,7 @@ from sandpile import Sandpile, run_sandpile_alone
 from agents import RandomAgent, MaxAgent, SeekSpecificValueAgent, SeekCenterAgent
 import time
 
-N_grid = 20 #number of cells per side
+N_grid = 10 #number of cells per side
 
 MAXIMUM_GRAINS = 4
 max_nmoves = 10000
@@ -49,11 +49,12 @@ for _ in range(N_RUNS):
     sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=max_nmoves)
 
     i = 0
-    game_is_running = sandpile.step()
+    game_is_running = True
     while game_is_running:
         # print(i)
         i+=1
-        game_is_running = sandpile.step()
+        sandpile_grid, agent_rewards_step, game_is_running = sandpile.step()
+        # print('agent_rewards_step', agent_rewards_step)
 
 
     # aggregate scores and moves
