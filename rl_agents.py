@@ -1,15 +1,13 @@
 import torch
 import torch.nn as nn 
-from torch import nn, Tensor
+from torch import nn
 import numpy as np
 import torch.nn.functional as F
 from torch.distributions import Categorical
-from agents import Agent
-from util import Directions
 
 class Policy(nn.Module):
     def __init__(self, input_dim, num_hidden_layers, hidden_dim, output_dim):
-        super(Policy, self).__init__()
+        super().__init__()
         
         self.input_dim = input_dim
         self.hidden_layers = nn.ModuleList()
@@ -39,22 +37,6 @@ class Policy(nn.Module):
         action = m.sample()
         return action.item(), m.log_prob(action)
     
-
-
-class RLPolicyAgent(Agent):
-    # This agent uses an RL based policy to choose how to move
-
-    def __init__(self, rl_policy, x_pos_init=0, y_pos_init=0):
-        super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
-        self.rl_policy = rl_policy
-        self.log_prob = None
-        self.action_idx = None
-
-    def choose_move(self, sandpile):
-        action_idx, log_prob = self.rl_policy.select_action(sandpile)
-        self.action_idx = action_idx
-        self.log_prob = log_prob
-        move = Directions[action_idx]
-        self.moves.append(move)
-        
-        return move
+    def test_func(self,):
+        print('fdsfd')
+  
