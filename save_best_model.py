@@ -16,7 +16,7 @@ class SaveBestModel:
     ):
         if current_valid_score > self.best_valid_score:
             self.best_valid_score = current_valid_score
-            print(f"\nBest validation loss: {self.best_valid_score}")
+            print(f"\nBest validation score: {self.best_valid_score}")
             print(f"\nSaving best model for episode: {episode_i}\n")
             torch.save({
                 'episode': episode_i,

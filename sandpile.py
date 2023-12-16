@@ -64,10 +64,10 @@ class Sandpile():
             if agent.is_in_game():
                 
                 # print('agent_pos (i,j) (Y, X): ', agent.get_agent_pos())
-                print('Moving agent')
+                # print('Moving agent')
                 # have the agent choose a direction to move in
                 direction = agent.choose_move(self)
-                print('move: ', direction)
+                # print('move: ', direction)
                 
                 agent.move_agent_in_direction(direction)
                 agent.set_is_getting_avalanched(False)
@@ -122,7 +122,8 @@ class Sandpile():
         game_is_running = iterations_not_exceeded and at_least_one_agent_in_game
         
         if not game_is_running:
-            print('Ending game')
+            # print('Ending game')
+            pass
             # return self.grid, self.agent_rewards, game_is_running
 
         self.iteration += 1
