@@ -97,16 +97,35 @@ def animate(i):
 # choose the interval based on dt and the time to animate one step
 interval = 100 #delay between frames in milliseconds
 
+random_agent_pos = []
+max_agent_pos = []
+ssv_agent_pos = []
+center_agent_pos = []
+
 if DO_ANIM:
     anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
 
 else:
     i = 0
     game_is_running = sandpile.step()
+    i+=1
     while game_is_running:
         print(i)
         i+=1
         game_is_running = sandpile.step()
+
+        random_agent_pos.append([random_agent.x_pos, random_agent.y_pos])
+        max_agent_pos.append([max_agent.x_pos, max_agent.y_pos])
+        ssv_agent_pos.append([ssv_agent.x_pos, ssv_agent.y_pos])
+        center_agent_pos.append([center_agent.x_pos, center_agent.y_pos])
+
+
+random_agent_pos = np.array(random_agent_pos)
+max_agent_pos = np.array(max_agent_pos)
+ssv_agent_pos = np.array(ssv_agent_pos)
+center_agent_pos = np.array(center_agent_pos)
+
+
 
 print('cumulative random_agent score: ', random_agent.cumulative_score)
 print('cumulative max_agent score: ', max_agent.cumulative_score)
@@ -142,8 +161,15 @@ fig_hist, axs_hist = plt.subplots(2,1)
 axs_hist[0].hist(avalanche_sizes,bins=bins, density=True)
 axs_hist[1].loglog(x_recon[:-1],hist_vals,color='r',marker='o')
 
-## TODO: add plotting of agent path
 # img = axs.imshow(grid)
+
+fig_pos, axs_pos = plt.subplots()
+axs_pos.plot(random_agent_pos[:,0], random_agent_pos[:,1], color='r', marker='o',label='Random Agent')
+axs_pos.plot(max_agent_pos[:,0], max_agent_pos[:,1], color='b', marker='o',label='Max Agent')
+axs_pos.plot(ssv_agent_pos[:,0], ssv_agent_pos[:,1], color='g', marker='o',label='SSV Agent')
+axs_pos.plot(center_agent_pos[:,0], center_agent_pos[:,1], color='k', marker='o',label='Center Agent')
+axs_pos.legend()
+
 plt.show()
 
 
