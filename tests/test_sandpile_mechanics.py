@@ -290,6 +290,48 @@ class TestSandpileMechanics(unittest.TestCase):
         e = cm.exception
         self.assertEqual(AssertionError, e.__class__)
 
+    def test_drop_sandgrain_preset_location(self,):
+
+        max_grains = 4
+        DROP_SAND=False
+
+        # define expected grid
+        # [[1. 1. 0. 0. 1.]
+        # [0. 1. 0. 0. 0.]
+        # [0. 0. 1. 0. 0.]
+        # [0. 0. 0. 0. 0.]
+        # [0. 0. 0. 0. 0.]]
+
+        # set up preset sandgrain locations (x,y) / (j,i)
+        sandgrain_locs = np.array([[0,0],
+                                   [1,1],
+                                   [1,0],
+                                   [self.N_grid//2, self.N_grid//2],
+                                   [self.N_grid-1, 0]])
+        
+        sandpile = Sandpile(N_grid=self.N_grid, DROP_SAND=True, MAXIMUM_GRAINS=max_grains, grain_loc_order=sandgrain_locs)
+        
+        EXPECTED_GRID = np.zeros((self.N_grid,self.N_grid))
+
+        N = sandgrain_locs.shape[0]
+        for i in range(N):
+            loc = sandgrain_locs[i,:]
+            # print(loc)
+            EXPECTED_GRID[loc[1], loc[0]] = 1
+
+        sandpile.print_grid()
+
+        print('expected grid')
+        print(EXPECTED_GRID)
+
+        #step
+        for i in range(N):
+            sandpile.step()
+
+        arraysEqual = np.array_equal(EXPECTED_GRID, sandpile.get_sandpile())
+        sandpile.print_grid()
+        self.assertTrue(arraysEqual)
+
 
 
 
@@ -305,6 +347,7 @@ def suite():
     suite.addTest(TestSandpileMechanics('test_avalanche_moves_agent'))   
     suite.addTest(TestSandpileMechanics('test_initial_grid_correctly_used'))
     suite.addTest(TestSandpileMechanics('test_initial_grid_not_square_raises_exception'))
+    suite.addTest(TestSandpileMechanics('test_drop_sandgrain_preset_location'))
     
     return suite
 

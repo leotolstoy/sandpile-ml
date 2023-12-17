@@ -82,7 +82,7 @@ class Sandpile():
                 # agent_rewards_step[i] -= 100
 
         if self.DROP_SAND:
-            self.drop_sandgrain_randomly()
+            self.drop_sandgrain()
 
         #update avalanchine state
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
@@ -159,7 +159,8 @@ class Sandpile():
     def drop_sandgrain(self,):
         if self.grain_loc_order is not None:
             sandgrain_pos = self.grain_loc_order[self.iteration, :]
-            self.drop_sandgrain_at_pos(self, sandgrain_pos[0], sandgrain_pos[0])
+            # print(sandgrain_pos)
+            self.drop_sandgrain_at_pos(sandgrain_pos[0], sandgrain_pos[1])
         else:
             self.drop_sandgrain_randomly()
 
