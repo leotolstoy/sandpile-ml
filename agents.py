@@ -217,7 +217,7 @@ class RLPolicyAgent(Agent):
         self.action_idx = None
 
     def choose_move(self, sandpile):
-        action_idx, log_prob = self.rl_policy.select_action(sandpile)
+        action_idx, log_prob = self.rl_policy.select_action(sandpile, self.x_pos, self.y_pos)
         self.action_idx = action_idx
         self.log_prob = log_prob
         move = list(Directions)[action_idx]
