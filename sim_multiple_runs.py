@@ -8,8 +8,8 @@ import time
 N_grid = 10 #number of cells per side
 
 MAXIMUM_GRAINS = 4
-max_nmoves = 10000
-N_RUNS = 100
+max_nmoves = 1000
+N_RUNS = 1000
 
 X_POS_INIT = N_grid//2
 Y_POS_INIT = N_grid//2
