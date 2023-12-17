@@ -22,6 +22,7 @@ class Policy(nn.Module):
             self.hidden_layers.append(nn.Dropout(p=0.0))
             
         self.output_layer = nn.Linear(hidden_dim, output_dim)
+        self._test_counter_i = 0
 
     def forward(self, x):
         for layer in self.hidden_layers:
@@ -43,4 +44,6 @@ class Policy(nn.Module):
         action = m.sample()
         # print('action: ', action)
         return action.item(), m.log_prob(action)
-    
+
+    def _test_counter(self,):
+        self._test_counter_i += 1

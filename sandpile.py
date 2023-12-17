@@ -3,7 +3,7 @@ import random
 
 class Sandpile():
 
-    def __init__(self,N_grid=2, initial_grid=None, MAXIMUM_GRAINS=4, agents=[], DROP_SAND=True, MAX_STEPS=1000):
+    def __init__(self,N_grid=2, initial_grid=None, MAXIMUM_GRAINS=4, agents=[], DROP_SAND=True, MAX_STEPS=1000, grain_loc_order=None):
 
         # allow for initial grid configuration
         if initial_grid is not None:
@@ -30,6 +30,7 @@ class Sandpile():
         self.is_avalanching = False
         self.was_avalanching_before = False
         self.avalanche_sizes = []
+        self.grain_loc_order = grain_loc_order
         self.agents = agents
         self.MAX_STEPS = MAX_STEPS
         self.iteration = 0
@@ -74,7 +75,7 @@ class Sandpile():
             # check agent position 
             if agent.is_in_game() and not self.check_agent_is_in_grid(agent):
                 agent.remove_agent_from_game()
-                self.agent_rewards_step[i] = -1000
+                # self.agent_rewards_step[i] = -1000
                 # self.agent_rewards_step[i] = -agent.get_cumulative_score()
                 # agent.append_reward(-agent.get_cumulative_score())
                 agent.append_reward(0)
@@ -115,7 +116,7 @@ class Sandpile():
             else:
                 # self.agent_rewards.append(-100)
                 # self.agent_rewards_step[i] = -agent.get_cumulative_score()
-                self.agent_rewards_step[i] = -1000
+                # self.agent_rewards_step[i] = -1000
                 pass
 
             
@@ -154,6 +155,13 @@ class Sandpile():
         in_y_pos = agent.y_pos >= self.top_bound_idx and agent.y_pos <= self.bot_bound_idx
 
         return in_x_pos and in_y_pos
+
+    def drop_sandgrain(self,):
+        if self.grain_loc_order is not None:
+            sandgrain_pos = self.grain_loc_order[self.iteration, :]
+            self.drop_sandgrain_at_pos(self, sandgrain_pos[0], sandgrain_pos[0])
+        else:
+            self.drop_sandgrain_randomly()
 
     def drop_sandgrain_at_pos(self, x_pos, y_pos):
         self.grid[y_pos, x_pos] += 1
