@@ -8,6 +8,8 @@ class Agent():
     def __init__(self, x_pos_init=0, y_pos_init=0):
         self.score = 0
         self.cumulative_score = 0
+        self.x_pos_init = x_pos_init
+        self.y_pos_init = y_pos_init
         self.x_pos = x_pos_init
         self.y_pos = y_pos_init
         self.moves = []
@@ -84,6 +86,17 @@ class Agent():
 
     def set_is_getting_avalanched(self, is_getting_avalanched):
         self.is_getting_avalanched = is_getting_avalanched
+
+    def reset(self,):
+        self.score = 0
+        self.cumulative_score = 0
+        self.x_pos = self.x_pos_init
+        self.y_pos = self.y_pos_init
+        self.moves = []
+        self.rewards = []
+        self.cumulative_rewards = []
+        self.in_game = True
+        self.is_getting_avalanched = False
 
 
 class RandomAgent(Agent):
