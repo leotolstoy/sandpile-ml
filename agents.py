@@ -215,11 +215,13 @@ class RLPolicyAgent(Agent):
         self.rl_policy = rl_policy
         self.log_prob = None
         self.action_idx = None
+        self.entropy = None
 
     def choose_move(self, sandpile):
-        action_idx, log_prob = self.rl_policy.select_action(sandpile, self.x_pos, self.y_pos)
+        action_idx, log_prob, entropies_actions = self.rl_policy.select_action(sandpile, self.x_pos, self.y_pos)
         self.action_idx = action_idx
         self.log_prob = log_prob
+        self.entropy = entropies_actions
         move = list(Directions)[action_idx]
         self.moves.append(move)
         

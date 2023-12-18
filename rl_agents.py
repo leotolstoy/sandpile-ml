@@ -29,21 +29,27 @@ class Policy(nn.Module):
             x = layer(x)
             
         action_scores = self.output_layer(x)
-        return F.softmax(action_scores, dim=-1)
+        return action_scores
+        # return F.softmax(, dim=-1)
         
 
     def select_action(self, sandpile, x_pos, y_pos):
         input_np = np.concatenate((sandpile.grid.reshape(-1), np.array([x_pos, y_pos])))
         sandpile_tensor = torch.from_numpy(input_np).float().to(self.device)
-        probs = self.forward(sandpile_tensor)
+        
+        logits = self.forward(sandpile_tensor)
+        # print('logits ', logits)
+        probs = F.softmax(logits, dim=-1)
         # print('probs: ', probs)
         # print('probs grad', probs.grad)
+        log_probs = F.log_softmax(logits, dim=-1)
+        entropies_actions = -(log_probs * probs).sum()
         m = Categorical(probs)
         # print('m: ', m)
 
         action = m.sample()
         # print('action: ', action)
-        return action.item(), m.log_prob(action)
+        return action.item(), m.log_prob(action), entropies_actions
 
     def _test_counter(self,):
         self._test_counter_i += 1
