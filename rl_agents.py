@@ -16,12 +16,12 @@ class Policy(nn.Module, Agent):
         self.input_dim = input_dim
         self.hidden_layers = nn.ModuleList()
         self.hidden_layers.append(nn.Linear(input_dim, hidden_dim))
-        self.hidden_layers.append(nn.GELU())
+        self.hidden_layers.append(nn.LeakyReLU(0.1))
         self.hidden_layers.append(nn.Dropout(p=0.0))
         
         for _ in range(0, num_hidden_layers):
             self.hidden_layers.append(nn.Linear(hidden_dim, hidden_dim))
-            self.hidden_layers.append(nn.GELU())
+            self.hidden_layers.append(nn.LeakyReLU(0.1))
             self.hidden_layers.append(nn.Dropout(p=0.0))
             
         self.output_layer = nn.Linear(hidden_dim, output_dim)
