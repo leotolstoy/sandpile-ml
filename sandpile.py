@@ -79,7 +79,6 @@ class Sandpile():
                 # self.agent_rewards_step[i] = -agent.get_cumulative_score()
                 # agent.append_reward(-agent.get_cumulative_score())
                 agent.append_reward(0)
-                # agent_rewards_step[i] -= 100
 
         if self.DROP_SAND:
             self.drop_sandgrain()
