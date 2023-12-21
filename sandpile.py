@@ -75,6 +75,7 @@ class Sandpile():
             # check agent position 
             if agent.is_in_game() and not self.check_agent_is_in_grid(agent):
                 agent.remove_agent_from_game()
+                # self.agent_rewards_step[i] = np.min((-10, -agent.get_cumulative_score()))
                 self.agent_rewards_step[i] = -10
                 # self.agent_rewards_step[i] = -agent.get_cumulative_score()
                 # agent.append_reward(-agent.get_cumulative_score())
@@ -115,6 +116,7 @@ class Sandpile():
             else:
                 # self.agent_rewards.append(-100)
                 # self.agent_rewards_step[i] = -agent.get_cumulative_score()
+                # self.agent_rewards_step[i] = np.min((-10, -agent.get_cumulative_score()))
                 self.agent_rewards_step[i] = -10
                 pass
 

@@ -17,12 +17,12 @@ class Policy(nn.Module, Agent):
         self.hidden_layers = nn.ModuleList()
         self.hidden_layers.append(nn.Linear(input_dim, hidden_dim))
         self.hidden_layers.append(nn.LeakyReLU(0.1))
-        self.hidden_layers.append(nn.Dropout(p=0.0))
+        self.hidden_layers.append(nn.Dropout(p=0.2))
         
         for _ in range(0, num_hidden_layers):
             self.hidden_layers.append(nn.Linear(hidden_dim, hidden_dim))
             self.hidden_layers.append(nn.LeakyReLU(0.1))
-            self.hidden_layers.append(nn.Dropout(p=0.0))
+            self.hidden_layers.append(nn.Dropout(p=0.2))
             
         self.output_layer = nn.Linear(hidden_dim, output_dim)
         self._test_counter_i = 0
@@ -40,7 +40,15 @@ class Policy(nn.Module, Agent):
         
 
     def select_action(self, sandpile, x_pos, y_pos):
-        input_np = np.concatenate((sandpile.grid.reshape(-1), np.array([x_pos, y_pos])))
+        
+        sandpile_input_norm = (sandpile.grid.reshape(-1) - (0)) * (1 - -1)/ ((sandpile.MAXIMUM_GRAINS-1) - 0) + (-1)
+        
+        # print(x_pos, y_pos, sandpile.N_grid//2)
+        pos_norm = (np.array([x_pos, y_pos]) - (0)) * (1 - -1)/ ((sandpile.N_grid-1) - 0) + (-1)
+        # print('sandpile_input_norm: ', sandpile_input_norm)
+        # print('pos_norm: ', pos_norm)
+        # input()
+        input_np = np.concatenate((sandpile_input_norm, pos_norm))
         sandpile_tensor = torch.from_numpy(input_np).float().to(self.device)
         
         logits = self.forward(sandpile_tensor)
