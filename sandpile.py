@@ -74,7 +74,7 @@ class Sandpile():
 
             # check agent position 
             if agent.is_in_game() and not self.check_agent_is_in_grid(agent):
-                print('AGENT WALKED OFF')
+                # print('AGENT WALKED OFF')
                 agent.remove_agent_from_game()
                 # self.agent_rewards_step[i] = np.min((-10, -agent.get_cumulative_score()))
                 self.agent_rewards_step[i] = -10

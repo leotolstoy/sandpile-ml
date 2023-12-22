@@ -22,5 +22,5 @@ class SaveBestModel:
                 'episode': episode_i,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-                'loss': current_valid_score,
+                'score': current_valid_score,
                 }, self.path)
