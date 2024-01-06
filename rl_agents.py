@@ -177,6 +177,7 @@ class ActorCritic(GenericRLAgent):
         self.action_idx = action.item()
         self.log_prob = m.log_prob(action)
         self.entropy = entropies_actions
+        self.value = critic_score
         return self.action_idx, critic_score, self.log_prob, entropies_actions
 
     def choose_move(self, sandpile):
