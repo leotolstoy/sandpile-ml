@@ -62,10 +62,6 @@ class Policy(nn.Module, Agent):
         # print('grid_input')
         # print(grid_input)
 
-        # print(x_pos, y_pos, sandpile.N_grid//2)
-        # pos_norm = (np.array([x_pos, y_pos]) - (0)) * (1 - -1)/ ((sandpile.N_grid-1) - 0) + (-1)
-        # input_np = np.concatenate((sandpile_input_norm, pos_norm))
-
         input_np = grid_input.reshape(-1)
         sandpile_tensor = torch.from_numpy(input_np).float().to(self.device)
         

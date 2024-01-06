@@ -219,23 +219,3 @@ class SeekCenterAgent(Agent):
 
         self.moves.append(best_move)
         return best_move
-    
-class RLPolicyAgent(Agent):
-    # This agent uses an RL based policy to choose how to move
-
-    def __init__(self, rl_policy, x_pos_init=0, y_pos_init=0):
-        super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
-        self.rl_policy = rl_policy
-        self.log_prob = None
-        self.action_idx = None
-        self.entropy = None
-
-    def choose_move(self, sandpile):
-        action_idx, log_prob, entropies_actions = self.rl_policy.select_action(sandpile, self.x_pos, self.y_pos)
-        self.action_idx = action_idx
-        self.log_prob = log_prob
-        self.entropy = entropies_actions
-        move = list(Directions)[action_idx]
-        self.moves.append(move)
-        
-        return move
