@@ -79,24 +79,20 @@ rl_policy_agent.to(device)
 MAXIMUM_GRAINS = 4
 max_nmoves_per_episode = 1000
 
-# rl_policy_agent = RLPolicyAgent(rl_policy=rl_policy)
 agents = [rl_policy_agent]
-# rl_policy_agent.move_agent_to_point(N_grid-1, N_grid-1)
-# start new sandpile with initial grid
 sandpile = Sandpile(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=None, MAX_STEPS=10)
 # rl_policy_agent.select_action(sandpile, 0, 0)
 # rl_policy_agent.select_action(sandpile, 0, N_grid-1)
 rl_policy_agent.select_action(sandpile, 4, 4)
-
 # rl_policy_agent.select_action(sandpile, N_grid-1, N_grid-1)
 
 N_training_episodes = 10000
 N_val_episodes = 100
 N_val_frequency = 500
-N_print = 10
+N_print = 100
 
 gamma = 0.999
-beta_entropy = 1e0
+beta_entropy = 1e1
 
 
 training_scores = []
@@ -121,15 +117,15 @@ optimizer = torch.optim.Adam(rl_policy_agent.parameters(), lr=1e-4, betas=(0.9, 
 # For now, generate the initial grid once 
 # generate initial grid
 # initial_grid_N = N_grid * N_grid * 4
-initial_grid_N = int(N_grid * N_grid)
-print('Generating initial grid')
-initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
-print(initial_grid)
+# initial_grid_N = int(N_grid * N_grid)
+# print('Generating initial grid')
+# initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
+# print(initial_grid)
 
 
 # generate preset sandgrain locations
-preset_sandgrain_locs = np.random.randint(0, N_grid, size=(max_nmoves_per_episode, 2))
-print('preset_sandgrain_locs', preset_sandgrain_locs)
+# preset_sandgrain_locs = np.random.randint(0, N_grid, size=(max_nmoves_per_episode, 2))
+# print('preset_sandgrain_locs', preset_sandgrain_locs)
 
 
 print("")
@@ -146,9 +142,9 @@ for i_episode in range(1, N_training_episodes+1):
     # print('i_episode: ', i_episode)
     
     # # generate initial grid
-    # initial_grid_N = N_grid * N_grid * 4
-    # # print('Generating initial grid')
-    # initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
+    initial_grid_N = N_grid * N_grid * 4
+    # print('Generating initial grid')
+    initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
     # print(initial_grid)
 
 
@@ -160,14 +156,14 @@ for i_episode in range(1, N_training_episodes+1):
 
     # start new sandpile with initial grid
     rl_policy_agent.reset()
-    sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=max_nmoves_per_episode, grain_loc_order=preset_sandgrain_locs)
+    sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=max_nmoves_per_episode, grain_loc_order=None)
     
     # sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=max_nmoves_per_episode)
     # sandpile = Sandpile(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=max_nmoves_per_episode)
 
     # move agent to random position at beginning of episode
-    # rl_policy_agent.move_agent_to_point(random.randint(0,N_grid-1), random.randint(0,N_grid-1))
-    rl_policy_agent.move_agent_to_point(N_grid-1, N_grid-1)
+    rl_policy_agent.move_agent_to_point(random.randint(0,N_grid-1), random.randint(0,N_grid-1))
+    # rl_policy_agent.move_agent_to_point(N_grid-1, N_grid-1)
 
     pos = rl_policy_agent.get_agent_pos()
     # print('Agent pos (ij): ', pos[0], pos[1])
@@ -209,7 +205,6 @@ for i_episode in range(1, N_training_episodes+1):
 
         # subtract expected value from just staying in the center
         # reward = reward - 1.
-        # reward = reward - sandpile_grid[N_grid//2, N_grid//2]
         log_probs.append(log_prob)
         entropies.append(entropy)
 
@@ -298,7 +293,7 @@ for i_episode in range(1, N_training_episodes+1):
         print('cumulative_score_episode', cumulative_score_episode)
         print('n_steps_episode', n_steps_episode)
 
-        print('log_probs: ', log_probs)
+        # print('log_probs: ', log_probs)
         # print('returns: ', returns)
         # print('entropies: ', entropies)
         # policy_loss = torch.tensor(policy_loss, requires_grad=True).sum()
@@ -336,20 +331,20 @@ for i_episode in range(1, N_training_episodes+1):
 
                 # generate initial grid
                 # run the sandpile 1000 times
-                # initial_grid_N = N_grid * N_grid * 4
+                initial_grid_N = N_grid * N_grid * 4
                 # print('Generating initial grid')
-                # initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
+                initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
                 # print('initial grid')
                 # print(initial_grid)
 
 
                 # start new sandpile with initial grid
                 rl_policy_agent.reset()
-                sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=max_nmoves_per_episode, grain_loc_order=preset_sandgrain_locs)
+                sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=max_nmoves_per_episode, grain_loc_order=None)
 
                 # move agent to random position at beginning of episode
-                # rl_policy_agent.move_agent_to_point(random.randint(0,N_grid-1), random.randint(0,N_grid-1))
-                rl_policy_agent.move_agent_to_point(N_grid-1, N_grid-1)
+                rl_policy_agent.move_agent_to_point(random.randint(0,N_grid-1), random.randint(0,N_grid-1))
+                # rl_policy_agent.move_agent_to_point(N_grid-1, N_grid-1)
 
                 i = 0
                 game_is_running = True
@@ -377,6 +372,8 @@ for i_episode in range(1, N_training_episodes+1):
                 total_val_score += cumulative_score_episode
 
         total_val_score = total_val_score/N_val_episodes
+
+        print('total_val_score: ', total_val_score)
         validation_scores.append(total_val_score)
 
         #save best model
@@ -492,10 +489,17 @@ agent_nmoves = []
 for _ in range(N_RUNS_TEST):
     # start new sandpile with initial grid
     rl_policy_agent.reset()
-    sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=max_nmoves_per_episode, grain_loc_order=preset_sandgrain_locs)
+
+    # # generate initial grid
+    initial_grid_N = N_grid * N_grid * 4
+    # print('Generating initial grid')
+    initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
+
+    sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=max_nmoves_per_episode, grain_loc_order=None)
 
     # move agent to random position at beginning of episode
-    rl_policy_agent.move_agent_to_point(N_grid-1, N_grid-1)
+    rl_policy_agent.move_agent_to_point(random.randint(0,N_grid-1), random.randint(0,N_grid-1))
+    # rl_policy_agent.move_agent_to_point(N_grid-1, N_grid-1)
 
     pos = rl_policy_agent.get_agent_pos()
     
