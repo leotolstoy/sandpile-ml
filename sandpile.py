@@ -5,7 +5,15 @@ class Sandpile():
     """This class implementes the sandpile environment and mechanics
     """
 
-    def __init__(self, N_grid=2, initial_grid=None, MAXIMUM_GRAINS=4, agents=[], DROP_SAND=True, MAX_STEPS=1000, grain_loc_order=None):
+    def __init__(self, 
+                 N_grid=2, 
+                 initial_grid=None, 
+                 MAXIMUM_GRAINS=4, 
+                 agents=[], 
+                 DROP_SAND=True, 
+                 MAX_STEPS=1000, 
+                 grain_loc_order=None,
+                 STORE_STATE_BUFFER=False):
         """
 
         Args:
@@ -16,6 +24,7 @@ class Sandpile():
             DROP_SAND (bool, optional): Whether to drop sandgrains. Defaults to True.
             MAX_STEPS (int, optional): The maximum number of steps to simulate. Defaults to 1000.
             grain_loc_order (np array, Nx2, optional): Prespecify the location of sandgrains to drop to. Defaults to None.
+            STORE_STATE_BUFFER (bool, optional): Specifies whether to store avalanche grid states and agent positions as
         """
 
         # allow for initial grid configuration
@@ -42,16 +51,14 @@ class Sandpile():
         self.grain_loc_order = grain_loc_order
         self.agents = agents
         self.MAX_STEPS = MAX_STEPS
+        self.STORE_STATE_BUFFER = STORE_STATE_BUFFER
+        self.grid_buffer = []
         self.iteration = 0
         self.agent_rewards = []
 
     def step(self,):
         """Step the simulation mechanics once
-
-        Returns:
-            _type_: _description_
         """
-
         self.avalanche_size = 0
         
         # preallocate agent rewards
@@ -84,13 +91,22 @@ class Sandpile():
         if self.DROP_SAND:
             self.drop_sandgrain()
 
-        #update avalanchine state
+        if self.STORE_STATE_BUFFER:
+            self.grid_buffer.append(np.copy(self.grid))
+
+
+        # update avalanche state
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
 
         # Avalanche 
         while self.is_avalanching:
             self.avalanche()
             self.avalanche_size += 1
+
+            # store intermediate avalanche states if the flag is set
+            if self.STORE_STATE_BUFFER:
+                self.grid_buffer.append(np.copy(self.grid))
+
 
         # update avalanche sizes
         if self.avalanche_size > 0:
@@ -139,6 +155,8 @@ class Sandpile():
         if not game_is_running:
             pass
         # input()
+
+        self.agent_rewards.append(self.agent_rewards_step)
 
         return self.grid, self.agent_rewards_step, game_is_running
     

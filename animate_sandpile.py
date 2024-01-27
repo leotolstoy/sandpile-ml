@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
 import matplotlib as mpl
-from time import time
+from time import time, sleep
 
 from util import Directions
 from sandpile import Sandpile
@@ -13,15 +13,11 @@ N_tick_step = 1
 
 MAXIMUM_GRAINS = 4
 N_runs = 1000
-frames = N_runs
+
 I = 0
 fig = plt.figure()
 
-#these bounds show the sandpile plus one square of void around it
-# LIM_MIN = 1 - 1 - 0.5
-# LIM_MAX = N_grid-0.5 + 1 + 1
-
-
+#these bounds show the sandpile
 LIM_MIN = 1 - 0.5
 LIM_MAX = N_grid-0.5
 
@@ -32,8 +28,6 @@ axs.grid(which='major', axis='both', linestyle='-', color='k', linewidth=1)
 
 axs.set_xticks(np.arange(-.5, N_grid, N_tick_step))
 axs.set_yticks(np.arange(-.5, N_grid, N_tick_step))
-
-
 
 # axs.set_xticks(np.arange(-.5 + 1, N_grid+1, N_tick_step))
 # axs.set_yticks(np.arange(-.5 + 1, N_grid+1, N_tick_step))
@@ -53,13 +47,34 @@ norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
 X_POS_INIT = N_grid//2
 Y_POS_INIT = N_grid//2
-sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, MAX_STEPS=N_runs)
+sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, MAX_STEPS=N_runs, STORE_STATE_BUFFER=True)
 
 fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs)
 
+
+
+# run the simulation
+for i in range(N_runs):
+    print(i)
+    
+    sandpile.step()
+    # print(sandpile.grid_buffer[i])
+    # sleep(2)
+
+grid_buffer = sandpile.grid_buffer
+print(len(grid_buffer))
+
+# for i in range(len(grid_buffer)):
+#     # print(i)
+#     print(grid_buffer[i])
+#     # input()
+# input()
+
+# loop through the grid buffer
+frames = len(grid_buffer)
 def init():
     """initialize animation"""
-    img = axs.imshow(sandpile.grid,cmap=cmap,norm=norm, origin="lower")
+    img = axs.imshow(grid_buffer[0],cmap=cmap,norm=norm, origin="lower")
     # fig.colorbar(img)
     
     return img,
@@ -67,11 +82,9 @@ def init():
 
 def animate(i):
     # print(i)
-    sandpile.step()
-    img = axs.imshow(sandpile.grid,cmap=cmap,norm=norm, origin="lower")
-    global I
-    I += 1
-    # print(I)
+    img = axs.imshow(grid_buffer[i],cmap=cmap,norm=norm, origin="lower")
+    # print(grid_buffer[i])
+    # sleep(2)
     return img, 
 
 # choose the interval based on dt and the time to animate one step
