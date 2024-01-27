@@ -5,6 +5,9 @@ from sandpile import Sandpile, run_sandpile_alone
 from agents import RandomAgent, MaxAgent, SeekSpecificValueAgent, SeekCenterAgent
 import time
 
+"""This script simulates the sandpile for multiple runs and outputs statistics about the runs
+"""
+
 N_grid = 10 #number of cells per side
 
 MAXIMUM_GRAINS = 4

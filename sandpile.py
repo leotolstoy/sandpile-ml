@@ -2,8 +2,21 @@ import numpy as np
 import random
 
 class Sandpile():
+    """This class implementes the sandpile environment and mechanics
+    """
 
-    def __init__(self,N_grid=2, initial_grid=None, MAXIMUM_GRAINS=4, agents=[], DROP_SAND=True, MAX_STEPS=1000, grain_loc_order=None):
+    def __init__(self, N_grid=2, initial_grid=None, MAXIMUM_GRAINS=4, agents=[], DROP_SAND=True, MAX_STEPS=1000, grain_loc_order=None):
+        """
+
+        Args:
+            N_grid (int, optional): The number of cells along one dimension. Grid will be N_grid x N_grid. Defaults to 2.
+            initial_grid (np array, 2D, optional): Option to prespecify an initial sandpile grid. Defaults to None.
+            MAXIMUM_GRAINS (int, optional): Maximum number of sandgrains before avalanching occurs. Defaults to 4.
+            agents (list, optional): A list of agents to simulate. Defaults to [].
+            DROP_SAND (bool, optional): Whether to drop sandgrains. Defaults to True.
+            MAX_STEPS (int, optional): The maximum number of steps to simulate. Defaults to 1000.
+            grain_loc_order (np array, Nx2, optional): Prespecify the location of sandgrains to drop to. Defaults to None.
+        """
 
         # allow for initial grid configuration
         if initial_grid is not None:
@@ -13,10 +26,6 @@ class Sandpile():
             self.grid = np.zeros((N_grid, N_grid))
 
         self.N_grid = N_grid
-        # self.left_bound_idx = 0 + 1
-        # self.right_bound_idx = N_grid - 1 + 1
-        # self.top_bound_idx = 0 + 1
-        # self.bot_bound_idx = N_grid - 1 + 1
 
         self.left_bound_idx = 0
         self.right_bound_idx = N_grid - 1
@@ -37,34 +46,24 @@ class Sandpile():
         self.agent_rewards = []
 
     def step(self,):
-        
+        """Step the simulation mechanics once
 
-        # # establish that at least one agent is in the game, or if no agents were initialized
-        # # set this to true so that we can keep looping
-        # at_least_one_agent_in_game = False or len(self.agents) == 0
-        # for agent in self.agents:
-        #     at_least_one_agent_in_game = at_least_one_agent_in_game or agent.is_in_game()
+        Returns:
+            _type_: _description_
+        """
 
-        # game_is_running = iterations_not_exceeded and at_least_one_agent_in_game
-        
-        # if not game_is_running:
-        #     print('Ending game')
-        #     return self.grid, self.agent_rewards, game_is_running
-
-        # self.iteration += 1
         self.avalanche_size = 0
         
-
-        
-
         # preallocate agent rewards
         self.agent_rewards_step = [0] * len(self.agents)
+
+        # Choose an action for each of the agents, if any are present
         for i, agent in enumerate(self.agents):
             
             if agent.is_in_game():
-                
                 # print('agent_pos (i,j) (Y, X): ', agent.get_agent_pos())
                 # print('Moving agent')
+
                 # have the agent choose a direction to move in
                 direction = agent.choose_move(self)
                 # print('move: ', direction)
@@ -72,7 +71,7 @@ class Sandpile():
                 agent.move_agent_in_direction(direction)
                 agent.set_is_getting_avalanched(False)
 
-            # check agent position 
+            # check agent position to see if they're still in the grid
             if agent.is_in_game() and not self.check_agent_is_in_grid(agent):
                 # print('AGENT WALKED OFF')
                 agent.remove_agent_from_game()
@@ -88,7 +87,7 @@ class Sandpile():
         #update avalanchine state
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
 
-        # avalanche 
+        # Avalanche 
         while self.is_avalanching:
             self.avalanche()
             self.avalanche_size += 1
@@ -98,9 +97,12 @@ class Sandpile():
             self.avalanche_sizes.append(self.avalanche_size)
             # print(self.avalanche_sizes)
 
-        # update agent rewards
+        # update agent rewards and states
         for i, agent in enumerate(self.agents):
             if agent.is_in_game():
+                
+                # if the agent is not getting avalanched, reward the agent with the number of sandgrains
+                # at its location
                 if not agent.get_is_getting_avalanched():
                     y_pos, x_pos = agent.get_agent_pos()
                     grid_reward = self.grid[y_pos, x_pos]
@@ -108,12 +110,11 @@ class Sandpile():
                     # agent.append_reward(reward)
                     self.agent_rewards_step[i] += grid_reward
 
+                # if the agent is getting avalanched, no reward
                 elif agent.get_is_getting_avalanched():
-                    # self.agent_rewards_step[i] -= self.avalanche_size
                     pass
 
                 agent.append_reward(self.agent_rewards_step[i])
-                    # self.agent_rewards.append(reward)
             else:
                 # self.agent_rewards.append(-100)
                 # self.agent_rewards_step[i] = -agent.get_cumulative_score()
@@ -136,29 +137,24 @@ class Sandpile():
         game_is_running = iterations_not_exceeded and at_least_one_agent_in_game
         
         if not game_is_running:
-            # print('Ending game')
             pass
-            # return self.grid, self.agent_rewards, game_is_running
-
-        
-
         # input()
 
-
-
-        # print(self.grid)
-        # print(agent_rewards_step)
-        # print(game_is_running)
         return self.grid, self.agent_rewards_step, game_is_running
     
     
     def check_agent_is_in_grid(self, agent):
+        """Check if the agent is still in the grid bounds
+        """
         in_x_pos = agent.x_pos >= self.left_bound_idx and agent.x_pos <= self.right_bound_idx
         in_y_pos = agent.y_pos >= self.top_bound_idx and agent.y_pos <= self.bot_bound_idx
 
         return in_x_pos and in_y_pos
 
+
     def drop_sandgrain(self,):
+        """Drop a sandgrain, either randomly or on a preset location
+        """
         if self.grain_loc_order is not None:
             sandgrain_pos = self.grain_loc_order[self.iteration, :]
             # print(sandgrain_pos)
@@ -183,40 +179,27 @@ class Sandpile():
         # print(self.grid)
 
     def avalanche(self,):
+        """Implements avalanche dynamics
+        """
         # print('AVALANCHING')
-        
-        # for agent in self.agents:
-            # print('agent_pos (i,j) (Y, X) before avalanche: ', agent.get_agent_pos())
-            # self.print_grid_and_agent_pos(agent)
 
         # find indices where avalanching/unstable
         # returns a Nx2 array of xy coordinates where N is the number of indices over the maximum
         avalanche_idxs = np.argwhere(self.grid >= self.MAXIMUM_GRAINS)
         N_avalanche_ixs = avalanche_idxs.shape[0]
 
-        # print(avalanche_idxs)
-
         #pick an unstable vertex at random
         rand_idx = np.random.randint(N_avalanche_ixs)
-        # print(rand_idx)
         rand_unstable = avalanche_idxs[rand_idx,:]
-        # print(rand_unstable)
 
         x_coord_unstable = rand_unstable[1]
         y_coord_unstable = rand_unstable[0]
-
-        # print('y_coord_unstable, x_coord_unstable')
-        # print(y_coord_unstable, x_coord_unstable)
-
 
         # topple the grid at this coordinate
         self.grid[y_coord_unstable, x_coord_unstable] -= self.MAXIMUM_GRAINS
 
         # increment neighboring vertex counts
         self.increment_neighbors(y_coord_unstable, x_coord_unstable)
-
-        # print('POST TOPPLE')
-        # self.print_grid()
 
         # move the agent to one of the neighbors if the agent was at the unstable coordinate
         for i, agent in enumerate(self.agents):
@@ -235,10 +218,6 @@ class Sandpile():
                 #update agent is_getting_avalanched
                 agent.set_is_getting_avalanched(True)
 
-                # print('agent pos after avalanche (i,j) (Y, X)', agent.get_agent_pos())
-                # self.print_agent_pos_on_grid(agent)
-                # input()
-
                 # check if agent is still in game
                 if not self.check_agent_is_in_grid(agent):
                     agent.remove_agent_from_game()
@@ -246,17 +225,14 @@ class Sandpile():
                     self.agent_rewards_step[i] = -100
                     agent.append_reward(0)
                     # print('REMOVING AGENT FROM GAME FROM AVALANCHE')
-        # input()
 
         # update avalanching state
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
-        
-        # print(self.grid)
-
-        # input()
 
     def increment_neighbors(self, y_coord, x_coord):
-
+        """Add one sandgrain to the neighbors (if they exist) of a 
+        given location
+        """
         if (x_coord - 1) >= self.left_bound_idx :
             self.grid[y_coord, x_coord - 1] += 1
 
@@ -272,7 +248,6 @@ class Sandpile():
     def get_sandpile(self,):
         return self.grid
 
-
     def print_grid(self,):
         print(self.get_sandpile())
 
@@ -284,7 +259,6 @@ class Sandpile():
             agent_grid[y_pos, x_pos] = 1
         return agent_grid
 
-
     def print_agent_pos_on_grid(self, agent):
         agent_grid = self.get_agent_pos_on_grid(agent)
         print(agent_grid)
@@ -293,8 +267,10 @@ class Sandpile():
         agent_grid = self.get_agent_pos_on_grid(agent)
         print(self.get_sandpile(),'\n\n' , agent_grid)
 
+
 def run_sandpile_alone(N_grid=2, initial_grid=None, MAXIMUM_GRAINS=4, DROP_SAND=True, MAX_STEPS=1000):
-    # runs the sandpile for MAX_STEPS iterations and returns it
+    """Runs the sandpile for MAX_STEPS iterations and returns it
+    """
     sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=DROP_SAND, MAX_STEPS=MAX_STEPS)
 
     for _ in range(MAX_STEPS):

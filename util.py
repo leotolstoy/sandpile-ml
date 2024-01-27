@@ -33,7 +33,6 @@ def get_new_pos_from_direction(direction, x_pos, y_pos):
     return new_x_pos, new_y_pos
 
 def choose_random_neighbor_from_point(x_pos, y_pos):
-
     possible_moves = [Directions.LEFT, Directions.RIGHT, Directions.UP, Directions.DOWN]
     direction = random.choice(possible_moves)
     new_x_pos, new_y_pos = get_new_pos_from_direction(direction, x_pos, y_pos)
@@ -41,8 +40,10 @@ def choose_random_neighbor_from_point(x_pos, y_pos):
     return new_x_pos, new_y_pos
 
 def calculate_best_move_to_reach_pos(x_pos_des, y_pos_des, x_pos_cur, y_pos_cur):
-    # evaluate moves based on distance to pos
-    # the the best move is the one that minimizes the distance to the pos
+    """Evaluate moves based on distance to pos
+    The best move is the one that minimizes the distance to the pos
+    Distance is Euclidean 2-norm between (x_pos_des, y_pos_des) and (x_pos_cur, y_pos_cur)
+    """
     smallest_dist_to_pos = 999999
     possible_moves = list(Directions)
     best_move = Directions.STAY

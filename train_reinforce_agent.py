@@ -19,6 +19,9 @@ from rl_agents import Policy
 from util import Directions
 from torch_util import enum_parameters
 
+"""This script trains an RL agent on the sandpile
+"""
+
 # Set the seed value all over the place to make this reproducible.
 seed_val = 42
 
@@ -114,20 +117,6 @@ agents = [rl_policy_agent]
 
 optimizer = torch.optim.Adam(rl_policy_agent.parameters(), lr=1e-4, betas=(0.9, 0.998), eps=1e-9, weight_decay=1e-4)
 
-# For now, generate the initial grid once 
-# generate initial grid
-# initial_grid_N = N_grid * N_grid * 4
-# initial_grid_N = int(N_grid * N_grid)
-# print('Generating initial grid')
-# initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
-# print(initial_grid)
-
-
-# generate preset sandgrain locations
-# preset_sandgrain_locs = np.random.randint(0, N_grid, size=(max_nmoves_per_episode, 2))
-# print('preset_sandgrain_locs', preset_sandgrain_locs)
-
-
 print("")
 print('Training...')
 # Measure how long the total training epoch takes.
@@ -141,70 +130,40 @@ for i_episode in range(1, N_training_episodes+1):
     t_episode_start = time.time()
     # print('i_episode: ', i_episode)
     
-    # # generate initial grid
+    # generate initial grid
     initial_grid_N = N_grid * N_grid * 4
     # print('Generating initial grid')
     initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
     # print(initial_grid)
 
-
-    # rl_policy_agent = RLPolicyAgent(rl_policy=rl_policy)
-    # agents = [rl_policy_agent]
-
-    
-
-
     # start new sandpile with initial grid
     rl_policy_agent.reset()
     sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=max_nmoves_per_episode, grain_loc_order=None)
     
-    # sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=max_nmoves_per_episode)
-    # sandpile = Sandpile(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=max_nmoves_per_episode)
-
     # move agent to random position at beginning of episode
     rl_policy_agent.move_agent_to_point(random.randint(0,N_grid-1), random.randint(0,N_grid-1))
-    # rl_policy_agent.move_agent_to_point(N_grid-1, N_grid-1)
-
     pos = rl_policy_agent.get_agent_pos()
-    # print('Agent pos (ij): ', pos[0], pos[1])
-    # print(initial_grid)
-    # sandpile.print_grid()
-    # print(rl_policy_agent.is_in_game())
-    # print(agents[0].is_in_game())
-    
+
     episode_rewards = []
     agent_moves = []
     log_probs = []
     entropies = []
     i = 0
-    # sandpile_grid, agent_rewards, game_is_running = sandpile.step()
     game_is_running = True
     while game_is_running:
         # print('Step i: ', i)
         i+=1
         sandpile_grid, agent_rewards, game_is_running = sandpile.step()
-        # print(sandpile_grid)
-        # sandpile.print_grid_and_agent_pos(rl_policy_agent)
-        # print(agent_rewards)
-        # print(game_is_running)
         pos = rl_policy_agent.get_agent_pos()
-        # print('Agent pos (ij): ', pos[0], pos[1])
 
         # get action and log prob
         action = rl_policy_agent.action_idx
         log_prob = rl_policy_agent.log_prob
         entropy = rl_policy_agent.entropy
 
-        # print('action: ', action)
-        # print('log_prob: ', log_prob)
-        # print('entropy ', entropy)
-
-
         #only one agent is running so agent_rewards is a list with one element
         reward = agent_rewards[0]
 
-        # subtract expected value from just staying in the center
-        # reward = reward - 1.
         log_probs.append(log_prob)
         entropies.append(entropy)
 
@@ -220,39 +179,13 @@ for i_episode in range(1, N_training_episodes+1):
     returns = deque(maxlen=max_nmoves_per_episode)
     n_steps_episode = len(episode_rewards)
 
-    
-
     for t in range(n_steps_episode)[::-1]:
         discounted_return_t = returns[0] if len(returns) > 0 else 0
         returns.appendleft(gamma * discounted_return_t + episode_rewards[t])
 
-    
-    # try other approach
-    # Rs = deque(maxlen=max_nmoves_per_episode)
-    # R = 0
-    # for i in reversed(range(len(episode_rewards))):
-    #     print(i)
-    #     R = gamma * R + episode_rewards[i]
-    #     Rs.appendleft(R)
-
-    # print('returns: ', returns)
-    # print('Rs: ', Rs)
-    # input()
-
     eps = np.finfo(np.float32).eps.item()
     returns = torch.tensor(returns)
 
-    # if len(returns) > 1:
-    #     returns = (returns - returns.mean()) / (returns.std() + eps)
-
-    # else:
-    #     returns = (returns - returns.mean())
-
-    # compute loss
-    # print('Post standard')
-    # print('returns: ', returns)
-
-    # policy_loss = []
     policy_loss = 0
 
 
@@ -260,18 +193,10 @@ for i_episode in range(1, N_training_episodes+1):
         # print('log_prob ', log_prob)
         # print('disc_return ', disc_return)
 
-        # print('log_prob.grad ', log_prob.grad_fn)
-        # print('disc_return.grad ', disc_return.grad_fn)
         policy_loss += (-log_prob * disc_return)
         
-        # policy_loss.append(-log_prob * disc_return)
-        # print(policy_loss)
-
-    # print(policy_loss)
-
     entropies = torch.tensor(entropies)
     entropy_loss = torch.sum(entropies)
-    
 
     loss = policy_loss - (beta_entropy * entropy_loss)
     optimizer.zero_grad()   
@@ -301,12 +226,6 @@ for i_episode in range(1, N_training_episodes+1):
         # print('policy_loss grad ', policy_loss.grad)
         print('entropy_loss: ', entropy_loss.item())
         print()
-    # TEST COUNTER
-    rl_policy_agent._test_counter()
-    # print('=========================== rl_policy_agent._test_counter_i : ', rl_policy_agent._test_counter_i, '===================')
-
-
-    # input()
 
     # periodically evaluate model and save it
     if i_episode % N_val_frequency == 0 and i_episode != 0:
@@ -317,7 +236,6 @@ for i_episode in range(1, N_training_episodes+1):
         # ========================================
         #               Validation
         # ========================================
-
 
         t0_val = time.time()
 
@@ -334,8 +252,6 @@ for i_episode in range(1, N_training_episodes+1):
                 initial_grid_N = N_grid * N_grid * 4
                 # print('Generating initial grid')
                 initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
-                # print('initial grid')
-                # print(initial_grid)
 
 
                 # start new sandpile with initial grid
@@ -344,7 +260,6 @@ for i_episode in range(1, N_training_episodes+1):
 
                 # move agent to random position at beginning of episode
                 rl_policy_agent.move_agent_to_point(random.randint(0,N_grid-1), random.randint(0,N_grid-1))
-                # rl_policy_agent.move_agent_to_point(N_grid-1, N_grid-1)
 
                 i = 0
                 game_is_running = True
@@ -357,9 +272,6 @@ for i_episode in range(1, N_training_episodes+1):
                     # get action and log prob
                     action = rl_policy_agent.action_idx
                     log_prob = rl_policy_agent.log_prob
-
-                    # print('action: ', action)
-                    # print('log_prob: ', log_prob)
 
                     #only one agent is running so agent_rewards is a list with one element
                     reward = agent_rewards[0]
@@ -381,7 +293,6 @@ for i_episode in range(1, N_training_episodes+1):
             total_val_score, i_episode, rl_policy_agent, optimizer
         )
 
-
         # Measure how long the validation run took.
         validation_time = format_time(time.time() - t0_val)
 
@@ -392,11 +303,6 @@ for i_episode in range(1, N_training_episodes+1):
 training_time = format_time(time.time() - t0)
 print("  Training took: {:}".format(training_time))
 print()
-
-
-#print training vals
-# print('Validation scores')
-# print(validation_scores)
 
 
 print("")
@@ -432,21 +338,13 @@ axs.legend()
 print(np.min(validation_scores))
 
 
-
-# Run the best model
-
+# Evaluate the best model
 if torch.cuda.is_available():       
     device = torch.device("cuda")
     print("Using GPU.")
 else:
     print("No GPU available, using the CPU instead.")
     device = torch.device("cpu")
-
-
-if torch.cuda.device_count() > 1:
-    print("Using", torch.cuda.device_count(), "GPUs!")
-    # dim = 0 [30, xxx] -> [10, ...], [10, ...], [10, ...] on 3 GPUs
-    model = nn.DataParallel(rl_policy)
 
 
 # SET UP POLICY AGENT
@@ -478,8 +376,6 @@ best_rl_policy_agent.load_state_dict(g)
 # Put model in evaluation mode
 best_rl_policy_agent.eval()
 
-
-
 N_RUNS_TEST = 1000
 
 t0 = time.time()
@@ -499,7 +395,6 @@ for _ in range(N_RUNS_TEST):
 
     # move agent to random position at beginning of episode
     rl_policy_agent.move_agent_to_point(random.randint(0,N_grid-1), random.randint(0,N_grid-1))
-    # rl_policy_agent.move_agent_to_point(N_grid-1, N_grid-1)
 
     pos = rl_policy_agent.get_agent_pos()
     

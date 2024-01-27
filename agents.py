@@ -5,6 +5,8 @@ from util import Directions, get_new_pos_from_direction, choose_random_neighbor_
 
 
 class Agent():
+    """This class implements the base agent that operates in the sandpile
+    """
     def __init__(self, x_pos_init=0, y_pos_init=0):
         self.score = 0
         self.cumulative_score = 0
@@ -100,28 +102,28 @@ class Agent():
 
 
 class RandomAgent(Agent):
-
+    """This agent will choose moves randomly but will 
+    not choose a move that removes it from the grid
+    """
     def __init__(self, x_pos_init=0, y_pos_init=0):
         super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
 
 
     def choose_move(self, sandpile):
-
+        """Choose a move randomly
+        """
         possible_moves = self.get_possible_moves_stay_in_grid(sandpile)
-
-        # print('possible_moves')
-        # print(possible_moves)
         move = random.choice(possible_moves)
-        # print('move')
-        # print(move)
         self.moves.append(move)
         
         return move
     
     
 class MaxAgent(Agent):
-    # This agent chooses to move to the nearest square (given the four cardinal directions
-    # plus staying in place) that has the highest score
+    """ This agent chooses to move to the nearest square (given the four cardinal directions
+     plus staying in place) that has the highest score
+    """
+    
 
     def __init__(self, x_pos_init=0, y_pos_init=0):
         super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
@@ -135,9 +137,6 @@ class MaxAgent(Agent):
         # first index, so we want to avoid bias based on which Direction
         # is listed first
         random.shuffle(possible_moves)
-
-        max_reward = 0
-        moves_with_highest_reward = []
 
         # evaluate possible moves based on maximum reward
         # add all moves that have a maximum reward
@@ -159,8 +158,10 @@ class MaxAgent(Agent):
         return move
 
 class SeekSpecificValueAgent(Agent):
-    # This agent chooses to move to the nearest square (given the four cardinal directions
-    # plus staying in place) that has a specific value
+    """ This agent chooses to move to the nearest square (given the four cardinal directions
+     plus staying in place) that has a specific value
+    """
+    
 
     def __init__(self, x_pos_init=0, y_pos_init=0, specific_value=1):
         super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
@@ -196,7 +197,9 @@ class SeekSpecificValueAgent(Agent):
         return move
 
 class SeekCenterAgent(Agent):
-    # This agent chooses to move to the center of the sandpile
+    """ This agent chooses to move to the center of the sandpile
+    """
+   
 
     def __init__(self, x_pos_init=0, y_pos_init=0):
         super().__init__(x_pos_init=x_pos_init, y_pos_init=y_pos_init)
@@ -215,6 +218,7 @@ class SeekCenterAgent(Agent):
         # compute center position
         center_pos = ((sandpile.N_grid-1)//2, (sandpile.N_grid-1)//2)
 
+        # find the best move to reach the center position
         best_move = calculate_best_move_to_reach_pos(center_pos[0], center_pos[1], self.x_pos, self.y_pos)
 
         self.moves.append(best_move)

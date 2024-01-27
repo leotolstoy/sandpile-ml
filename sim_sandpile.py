@@ -57,7 +57,6 @@ Y_POS_INIT = N_grid//2
 sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, MAX_STEPS=N_runs)
 
 
-
 def init():
     """initialize animation"""
     img = axs.imshow(sandpile.grid,cmap=cmap,norm=norm, origin="lower")
