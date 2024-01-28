@@ -16,7 +16,7 @@ N_grid = 10 #number of cells per side
 N_tick_step = 1
 
 MAXIMUM_GRAINS = 4
-N_runs = 10
+N_runs = 200
 
 I = 0
 fig = plt.figure()
@@ -50,7 +50,8 @@ bounds = np.arange(0, MAXIMUM_GRAINS+1)
 norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
 DO_EXPORT_ANIM = True
-AGENT_COLOR_CODES = ['r', 'b']
+# AGENT_COLOR_CODES = ['r', 'b']
+AGENT_COLOR_CODES = ['r']
 
 
 # Run the best model
@@ -105,7 +106,8 @@ center_agent = SeekCenterAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init
 
 
 # aggregate agents
-agents = [random_agent, rl_policy_agent]
+# agents = [random_agent, rl_policy_agent]
+agents = [ rl_policy_agent]
 
 
 # generate initial grid
@@ -117,7 +119,8 @@ print('initial grid')
 print(initial_grid)
 sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=N_runs, STORE_STATE_BUFFER=True)
 
-AGENT_NAMES = ['Random Agent', 'RL Agent']
+# AGENT_NAMES = ['Random Agent', 'RL Agent']
+AGENT_NAMES = ['RL Agent']
 
 fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs)
 
@@ -178,7 +181,7 @@ def animate(i):
 
 anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
 if DO_EXPORT_ANIM:
-    anim.save('raw_animation_rl_agent.gif', writer='imagemagick', fps=2)
+    anim.save('raw_animation_rl_agent.gif', writer='imagemagick', fps=10)
 
 
 plt.show()
