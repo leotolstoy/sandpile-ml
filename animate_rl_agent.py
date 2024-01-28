@@ -50,7 +50,7 @@ bounds = np.arange(0, MAXIMUM_GRAINS+1)
 norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
 DO_EXPORT_ANIM = True
-AGENT_COLOR_CODES = ['r', 'b', 'k']
+AGENT_COLOR_CODES = ['r', 'b']
 
 
 # Run the best model
@@ -105,7 +105,7 @@ center_agent = SeekCenterAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init
 
 
 # aggregate agents
-agents = [rl_policy_agent, random_agent, center_agent]
+agents = [random_agent, rl_policy_agent]
 
 
 # generate initial grid
@@ -117,6 +117,7 @@ print('initial grid')
 print(initial_grid)
 sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=N_runs, STORE_STATE_BUFFER=True)
 
+AGENT_NAMES = ['Random Agent', 'RL Agent']
 
 fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs)
 
@@ -146,12 +147,12 @@ def init():
     img = axs.imshow(grid_buffer[0],cmap=cmap,norm=norm, origin="lower")
     agent_positions_step = agent_positions[0]
 
-    for i, pos in enumerate(agent_positions_step):
+    for kk, pos in enumerate(agent_positions_step):
         pos_i = pos[1]
         pos_j = pos[0]
-        axs.plot(pos_i, pos_j, color=AGENT_COLOR_CODES[i], marker='o', markersize=36)
+        axs.scatter(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
 
-    return axs,
+    return img,
 
 # choose the interval based on dt and the time to animate one step
 interval = 100 #delay between frames in milliseconds
@@ -168,13 +169,16 @@ def animate(i):
         pos_i = pos[1]
         pos_j = pos[0]
         # print(pos)
-        axs.plot(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='.', markersize=36)
+        axs.scatter(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
 
-    return axs, 
+    axs.set_xlim(LIM_MIN, LIM_MAX)
+    axs.set_ylim(LIM_MIN, LIM_MAX)
+
+    return img, 
 
 anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
 if DO_EXPORT_ANIM:
-    anim.save('animation_rl_agent.gif', writer='imagemagick', fps=2)
+    anim.save('raw_animation_rl_agent.gif', writer='imagemagick', fps=2)
 
 
 plt.show()

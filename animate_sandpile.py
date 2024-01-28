@@ -14,7 +14,7 @@ N_grid = 10 #number of cells per side
 N_tick_step = 1
 
 MAXIMUM_GRAINS = 4
-N_runs = 50
+N_runs = 500
 
 fig = plt.figure()
 
@@ -46,7 +46,7 @@ cmap = plt.cm.get_cmap('Blues')
 bounds = np.arange(0, MAXIMUM_GRAINS+1)
 norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
-DO_AGENT_SIM = True
+DO_AGENT_SIM = not True
 DO_EXPORT_ANIM = True
 AGENT_COLOR_CODES = ['r', 'b']
 
@@ -105,10 +105,10 @@ def init():
     for kk, pos in enumerate(agent_positions_step):
         pos_i = pos[1]
         pos_j = pos[0]
-        axs.plot(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='o', markersize=36, label=AGENT_NAMES[kk])
+        axs.scatter(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
 
-    axs.legend()
-    return axs,
+    # axs.legend(loc='lower center',ncol=2,frameon=False, bbox_to_anchor=(0.5, -0.05))
+    return img,
 
 
 def animate(i):
@@ -122,12 +122,12 @@ def animate(i):
         pos_i = pos[1]
         pos_j = pos[0]
         # print(pos)
-        axs.plot(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='.', markersize=36)
+        axs.scatter(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
 
     axs.set_xlim(LIM_MIN, LIM_MAX)
     axs.set_ylim(LIM_MIN, LIM_MAX)
-    # axs.legend()
-    return axs, 
+    # axs.legend(loc='lower center',ncol=2,frameon=False, bbox_to_anchor=(0.5, -0.05))
+    return img, 
 
 # choose the interval based on dt and the time to animate one step
 interval = 100 #delay between frames in milliseconds
@@ -135,7 +135,9 @@ interval = 100 #delay between frames in milliseconds
 anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
 
 if DO_EXPORT_ANIM:
-    anim.save('animation.gif', writer='imagemagick', fps=2)
+    # FFwriter = animation.FFMpegWriter(fps=2)
+    # anim.save('animation.mp4', writer=FFwriter)
+    anim.save('raw_animation.gif', writer='imagemagick', fps=10)
 
 
 plt.show()
