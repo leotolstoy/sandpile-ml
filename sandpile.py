@@ -55,6 +55,7 @@ class Sandpile():
         self.grid_buffer = []
         self.iteration = 0
         self.agent_rewards = []
+        self.agent_positions = []
 
     def step(self,):
         """Step the simulation mechanics once
@@ -94,6 +95,12 @@ class Sandpile():
         if self.STORE_STATE_BUFFER:
             self.grid_buffer.append(np.copy(self.grid))
 
+            # store agent positions
+            agent_positions_i = [agent.get_agent_pos() for agent in self.agents]
+            # print(agent_positions_i)
+            # input()
+            self.agent_positions.append(agent_positions_i)
+
 
         # update avalanche state
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
@@ -106,6 +113,12 @@ class Sandpile():
             # store intermediate avalanche states if the flag is set
             if self.STORE_STATE_BUFFER:
                 self.grid_buffer.append(np.copy(self.grid))
+
+                # store agent positions
+                agent_positions_i = [agent.get_agent_pos() for agent in self.agents]
+                self.agent_positions.append(agent_positions_i)
+                # print(agent_positions_i)
+                # input()
 
 
         # update avalanche sizes

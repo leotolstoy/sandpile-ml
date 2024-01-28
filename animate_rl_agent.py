@@ -7,14 +7,16 @@ import random
 from util import Directions
 from sandpile import Sandpile, run_sandpile_alone
 from agents import RandomAgent, MaxAgent, SeekSpecificValueAgent, SeekCenterAgent
-
+import torch
+from torch_util import enum_parameters
+from rl_agents import Policy
 
 N_grid = 10 #number of cells per side
 # N_tick_step = 5
 N_tick_step = 1
 
 MAXIMUM_GRAINS = 4
-N_runs = 200
+N_runs = 10
 
 I = 0
 fig = plt.figure()
@@ -47,35 +49,76 @@ cmap = plt.cm.get_cmap('Blues')
 bounds = np.arange(0, MAXIMUM_GRAINS+1)
 norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
-DO_AGENT_SIM = True
 DO_EXPORT_ANIM = True
 AGENT_COLOR_CODES = ['r', 'b', 'k']
 
-if DO_AGENT_SIM:
-    # initialize agents with random positions
-    random_agent = RandomAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1))
-    max_agent = MaxAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1))
-    ssv_agent = SeekSpecificValueAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1),specific_value=1)
-    center_agent = SeekCenterAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1))
 
-    # agents = [random_agent, max_agent, ssv_agent, center_agent]
-    agents = [random_agent, center_agent]
-
-    # generate initial grid
-    # run the sandpile 1000 times
-    initial_grid_N = 1000
-    print('Generating initial grid')
-    initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
-    print('initial grid')
-    print(initial_grid)
-    sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=N_runs, STORE_STATE_BUFFER=True)
-
+# Run the best model
+if torch.cuda.is_available():       
+    device = torch.device("cuda")
+    print("Using GPU.")
 else:
-    sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, MAX_STEPS=N_runs, STORE_STATE_BUFFER=True)
+    print("No GPU available, using the CPU instead.")
+    device = torch.device("cpu")
+
+
+# SET UP POLICY AGENT
+N_grid = 10
+num_hidden_layers = 4
+hidden_dim = 64
+input_dim = ((2*N_grid-1)**2) # The number of input variables. 
+output_dim = len(Directions) # The number of output variables. 
+
+rl_policy_agent = Policy(
+    input_dim=input_dim,
+    num_hidden_layers=num_hidden_layers,
+    hidden_dim=hidden_dim,
+    output_dim=output_dim,
+    device=device
+)
+enum_parameters(rl_policy_agent)
+rl_policy_agent.to(device)
+
+model_nickname = 'reinforce-agent'
+
+# model_dir = f'/staging_area/{model_nickname}/'
+model_dir = ''
+
+checkpoint = torch.load(model_dir+'best_rl_policy_agent.tar')
+g = checkpoint['model_state_dict']
+score = checkpoint['score']
+print(f'Best Score: {score}')
+rl_policy_agent.load_state_dict(g)
+
+# Put model in evaluation mode
+rl_policy_agent.eval()
+
+# start new sandpile with initial grid
+rl_policy_agent.reset()
+
+
+# initialize regular agents with random positions
+random_agent = RandomAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1))
+max_agent = MaxAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1))
+ssv_agent = SeekSpecificValueAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1),specific_value=1)
+center_agent = SeekCenterAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1))
+
+
+# aggregate agents
+agents = [rl_policy_agent, random_agent, center_agent]
+
+
+# generate initial grid
+# run the sandpile 1000 times
+initial_grid_N = 1000
+print('Generating initial grid')
+initial_grid = run_sandpile_alone(N_grid=N_grid, initial_grid=None, MAXIMUM_GRAINS=MAXIMUM_GRAINS, DROP_SAND=True, MAX_STEPS=initial_grid_N)
+print('initial grid')
+print(initial_grid)
+sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=N_runs, STORE_STATE_BUFFER=True)
+
 
 fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs)
-
-
 
 # run the simulation
 for i in range(N_runs):
@@ -110,6 +153,9 @@ def init():
 
     return axs,
 
+# choose the interval based on dt and the time to animate one step
+interval = 100 #delay between frames in milliseconds
+
 
 def animate(i):
     # print(i)
@@ -126,13 +172,8 @@ def animate(i):
 
     return axs, 
 
-# choose the interval based on dt and the time to animate one step
-interval = 100 #delay between frames in milliseconds
-
 anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
-
-if DO_EXPORT_ANIM:
-    anim.save('animation.gif', writer='imagemagick', fps=2)
+anim.save('animation.gif', writer='imagemagick', fps=2)
 
 #print final grid
 sandpile.print_grid()

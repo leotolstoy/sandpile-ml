@@ -7,53 +7,11 @@ import matplotlib as mpl
 from sandpile import Sandpile, run_sandpile_alone
 from agents import RandomAgent, MaxAgent, SeekSpecificValueAgent, SeekCenterAgent
 
-DO_ANIM = not True
 N_grid = 10 #number of cells per side
-# N_tick_step = 5
-N_tick_step = 1
 
 MAXIMUM_GRAINS = 4
 N_runs = 1000
-frames = N_runs
-I = 0
-fig = plt.figure()
 
-#these bounds show the sandpile plus one square of void around it
-# LIM_MIN = 1 - 1 - 0.5
-# LIM_MAX = N_grid-0.5 + 1 + 1
-
-
-LIM_MIN = 1 - 0.5
-LIM_MAX = N_grid-0.5
-
-axs = fig.add_subplot(111, aspect='equal', autoscale_on=False,
-                     xlim=(LIM_MIN, LIM_MAX), ylim=(LIM_MIN, LIM_MAX))
-# axs.grid()
-axs.grid(which='major', axis='both', linestyle='-', color='k', linewidth=1)
-
-axs.set_xticks(np.arange(-.5, N_grid, N_tick_step))
-axs.set_yticks(np.arange(-.5, N_grid, N_tick_step))
-
-
-
-# axs.set_xticks(np.arange(-.5 + 1, N_grid+1, N_tick_step))
-# axs.set_yticks(np.arange(-.5 + 1, N_grid+1, N_tick_step))
-# axs.set_xticks([])
-# axs.set_yticks([])
-
-# axs.xaxis.set_tick_params(labelbottom=False)
-# axs.yaxis.set_tick_params(labelleft=False)
-
-# https://stackoverflow.com/questions/43971138/python-plotting-colored-grid-based-on-values
-# https://stackoverflow.com/questions/7229971/2d-grid-data-visualization-in-python
-# https://matplotlib.org/stable/api/_as_gen/matplotlib.animation.FuncAnimation.html
-# cmap = plt.cm.viridis
-cmap = plt.cm.get_cmap('Blues')
-bounds = np.arange(0, MAXIMUM_GRAINS+1)
-norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
-
-X_POS_INIT = N_grid//2
-Y_POS_INIT = N_grid//2
 
 # initialize agents with random positions
 random_agent = RandomAgent(x_pos_init=random.randint(0,N_grid-1), y_pos_init=random.randint(0,N_grid-1))
@@ -76,24 +34,6 @@ print(initial_grid)
 # start new sandpile with initial grid
 sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=N_runs)
 
-# input()
-def init():
-    """initialize animation"""
-    img = axs.imshow(sandpile.grid,cmap=cmap,norm=norm, origin="lower")
-    fig.colorbar(img)
-    
-    return img,
-
-
-def animate(i):
-    # print(i)
-    sandpile.step()
-    img = axs.imshow(sandpile.grid)
-    global I
-    I += 1
-    # print(I)
-    return img, 
-
 # choose the interval based on dt and the time to animate one step
 interval = 100 #delay between frames in milliseconds
 
@@ -102,22 +42,18 @@ max_agent_pos = []
 ssv_agent_pos = []
 center_agent_pos = []
 
-if DO_ANIM:
-    anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
+i = 0
+game_is_running = True
+while game_is_running:
+    print(i)
+    i+=1
+    sandpile_grid, agent_rewards, game_is_running = sandpile.step()
+    print(agent_rewards)
 
-else:
-    i = 0
-    game_is_running = True
-    while game_is_running:
-        print(i)
-        i+=1
-        sandpile_grid, agent_rewards, game_is_running = sandpile.step()
-        print(agent_rewards)
-
-        random_agent_pos.append([random_agent.x_pos, random_agent.y_pos])
-        max_agent_pos.append([max_agent.x_pos, max_agent.y_pos])
-        ssv_agent_pos.append([ssv_agent.x_pos, ssv_agent.y_pos])
-        center_agent_pos.append([center_agent.x_pos, center_agent.y_pos])
+    random_agent_pos.append([random_agent.x_pos, random_agent.y_pos])
+    max_agent_pos.append([max_agent.x_pos, max_agent.y_pos])
+    ssv_agent_pos.append([ssv_agent.x_pos, ssv_agent.y_pos])
+    center_agent_pos.append([center_agent.x_pos, center_agent.y_pos])
 
 
 random_agent_pos = np.array(random_agent_pos)
