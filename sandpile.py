@@ -40,8 +40,6 @@ class Sandpile():
         self.right_bound_idx = N_grid - 1
         self.top_bound_idx = 0
         self.bot_bound_idx = N_grid - 1
-
-
         self.MAXIMUM_GRAINS = MAXIMUM_GRAINS
         self.DROP_SAND = DROP_SAND
         self.avalanche_size = 0
@@ -150,8 +148,6 @@ class Sandpile():
                 # self.agent_rewards_step[i] = np.min((-10, -agent.get_cumulative_score()))
                 # self.agent_rewards_step[i] = -100
                 pass
-
-            
 
         self.iteration += 1
 

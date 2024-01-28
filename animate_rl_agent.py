@@ -22,7 +22,7 @@ I = 0
 fig = plt.figure()
 
 #these bounds show the sandpile
-LIM_MIN = 1 - 0.5
+LIM_MIN = 0 - 0.5
 LIM_MAX = N_grid-0.5
 
 axs = fig.add_subplot(111, aspect='equal', autoscale_on=False,
@@ -173,7 +173,9 @@ def animate(i):
     return axs, 
 
 anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
-anim.save('animation.gif', writer='imagemagick', fps=2)
+if DO_EXPORT_ANIM:
+    anim.save('animation_rl_agent.gif', writer='imagemagick', fps=2)
+
 
 plt.show()
 

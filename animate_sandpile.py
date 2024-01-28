@@ -14,13 +14,12 @@ N_grid = 10 #number of cells per side
 N_tick_step = 1
 
 MAXIMUM_GRAINS = 4
-N_runs = 500
+N_runs = 50
 
-I = 0
 fig = plt.figure()
 
 #these bounds show the sandpile
-LIM_MIN = 1 - 0.5
+LIM_MIN = 0 - 0.5
 LIM_MAX = N_grid-0.5
 
 axs = fig.add_subplot(111, aspect='equal', autoscale_on=False,
@@ -49,7 +48,7 @@ norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
 DO_AGENT_SIM = True
 DO_EXPORT_ANIM = True
-AGENT_COLOR_CODES = ['r', 'b', 'k']
+AGENT_COLOR_CODES = ['r', 'b']
 
 if DO_AGENT_SIM:
     # initialize agents with random positions
@@ -74,7 +73,7 @@ else:
     sandpile = Sandpile(N_grid=N_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, MAX_STEPS=N_runs, STORE_STATE_BUFFER=True)
 
 fig.colorbar(mpl.cm.ScalarMappable(norm=norm, cmap=cmap), ax=axs)
-
+AGENT_NAMES = ['Random Agent', 'Center Agent']
 
 
 # run the simulation
@@ -103,11 +102,12 @@ def init():
     img = axs.imshow(grid_buffer[0],cmap=cmap,norm=norm, origin="lower")
     agent_positions_step = agent_positions[0]
 
-    for i, pos in enumerate(agent_positions_step):
+    for kk, pos in enumerate(agent_positions_step):
         pos_i = pos[1]
         pos_j = pos[0]
-        axs.plot(pos_i, pos_j, color=AGENT_COLOR_CODES[i], marker='o', markersize=36)
+        axs.plot(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='o', markersize=36, label=AGENT_NAMES[kk])
 
+    axs.legend()
     return axs,
 
 
@@ -124,6 +124,9 @@ def animate(i):
         # print(pos)
         axs.plot(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='.', markersize=36)
 
+    axs.set_xlim(LIM_MIN, LIM_MAX)
+    axs.set_ylim(LIM_MIN, LIM_MAX)
+    # axs.legend()
     return axs, 
 
 # choose the interval based on dt and the time to animate one step
