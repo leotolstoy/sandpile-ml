@@ -1,4 +1,7 @@
 *.pyc
 *.mp4
 *.gif
+!animation.gif
+!animation_rl_agent.gif
+
 *.png

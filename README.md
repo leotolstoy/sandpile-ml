@@ -58,4 +58,4 @@ The [tests.py](tests.py) folder contains unit tests for different components of 
 ## Contact
 
 If you have any questions or would like to reach out to me, you can find me here: <br />
-Email: leomed07@gmail.com <br />
+Email: leomed97@gmail.com <br />
