@@ -6,7 +6,7 @@ This repository contains a PyTorch implementation of a Reinforcement Learning (R
 
 ### Abelian Sandpile Game
 
-The *Abelian sandpile model* is a cellular automaton that exhibits self-organized criticality. In this game, grains of sand are dropped onto a grid, and when a cell exceeds a certain threshold, it topples and distributes sand to its neighboring cells. The dynamics of the sandpile lead to emergent patterns and critical behavior, in which large 'avalanches' (large series of grains falling and sequentially displacing neighbors) cannot be easily anticipated. As with other systems exhibiting self-organized criticality, the dynamics of the sandpile game exhibit scale invariance (the size of the avalanche follows a power law distribution, where larger avalanches are less likely).
+The [Abelian sandpile model](https://en.wikipedia.org/wiki/Abelian_sandpile_model) is a cellular automaton that exhibits self-organized criticality. In this game, grains of sand are dropped onto a grid, and when a cell exceeds a certain threshold, it topples and distributes sand to its neighboring cells. The dynamics of the sandpile lead to emergent patterns and critical behavior, in which large 'avalanches' (large series of grains falling and sequentially displacing neighbors) cannot be easily anticipated. As with other systems exhibiting self-organized criticality, the dynamics of the sandpile game exhibit scale invariance (the size of the avalanche follows a power law distribution, where larger avalanches are less likely).
 
 ### Policy Gradients
 
@@ -14,9 +14,9 @@ The RL agent in this repository utilizes the *REINFORCE algorithm*, a policy gra
 
 ## Usage
 ### Dependencies
--PyTorch
--NumPy
--Matplotlib
+- PyTorch
+- NumPy
+- Matplotlib
 
 ### Training
 
@@ -46,12 +46,13 @@ python animate_rl_agent.py
 ```
 
 ## How It Works
-### RL Policy Class Implementations
-rl_agents.py: Contains the PyTorch implementation of the RL policy class.
 ### Agent Functionality
-agents.py: Implements the generic agent functionality in the simulation, including interaction with the sandpile environment. 
+[agents.py](agents.py): Implements the generic agent functionality in the simulation, including interaction with the sandpile environment. 
+
+### RL Policy Class Implementations
+[rl_agents.py](rl_agents.py): Contains the PyTorch implementation of the RL policy class.
 ### Tests
-The tests folder contains unit tests for different components of the codebase, such as testing sandpile mechanics or agent movement.
+The [tests.py](tests.py) folder contains unit tests for different components of the codebase, such as testing sandpile mechanics or agent movement.
 
 
 ## Contact
