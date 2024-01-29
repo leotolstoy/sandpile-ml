@@ -2,9 +2,9 @@
 
 ## Introduction
 
-This repository contains a PyTorch implementation of a Reinforcement Learning (RL) policy agent using the REINFORCE/policy gradient algorithm. The agent is trained to maximize the score in a simulated Abelian sandpile game, which is a classic system exhibiting self-organized criticality, and is meant to provide a brief investigation to neural networks' ability to learn environments exhibiting self-organized criticality.
+This repository contains a PyTorch implementation of a Reinforcement Learning (RL) policy agent using the REINFORCE/policy gradient algorithm. The agent is trained to maximize the score in a game featuring a simulated Abelian sandpile model, which is a classic system exhibiting self-organized criticality, and is meant to provide a brief investigation to neural networks' ability to learn environments exhibiting self-organized criticality.
 
-### Abelian Sandpile Game
+### Abelian Sandpile Model
 ![sandpile](animation.gif)
 
 The [Abelian sandpile model](https://en.wikipedia.org/wiki/Abelian_sandpile_model) is a cellular automaton that exhibits self-organized criticality. In this game, grains of sand are dropped onto a grid, and when a cell exceeds a certain threshold, it topples and distributes sand to its neighboring cells. The dynamics of the sandpile lead to emergent patterns and critical behavior, in which large 'avalanches' (large series of grains falling and sequentially displacing neighbors) cannot be easily anticipated. As with other systems exhibiting self-organized criticality, the dynamics of the sandpile game exhibit scale invariance (the size of the avalanche follows a power law distribution, where larger avalanches are less likely).
