@@ -169,7 +169,6 @@ class Sandpile():
         if self.STORE_STATE_BUFFER:
             # store agent positions
             all_agent_is_getting_avalanched_i = [agent.get_is_getting_avalanched() for agent in self.agents]
-            self.all_agent_positions.append(all_agent_positions_i)
 
             self.all_agent_is_getting_avalanched.append(all_agent_is_getting_avalanched_i)
 
