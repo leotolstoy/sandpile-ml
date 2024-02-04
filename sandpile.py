@@ -106,6 +106,9 @@ class Sandpile():
             all_agent_moves_i = [agent.moves[-1] for agent in self.agents]
             self.all_agent_moves.append(all_agent_moves_i)
 
+            #store iterations for step
+            self.all_agent_iterations.append([self.iteration])
+
 
         # update avalanche state
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
@@ -124,7 +127,7 @@ class Sandpile():
                 self.all_agent_positions.append(all_agent_positions_i)
 
                 # store agent iteration
-                self.all_agent_iterations.append([self.iteration] * len(self.agents))
+                self.all_agent_iterations.append([self.iteration])
 
                 # print(all_agent_positions_i)
                 # input()
