@@ -167,7 +167,7 @@ def init():
     for kk, agent_pos_cur in enumerate(agent_positions_step):
         pos_i = agent_pos_cur[0] # y
         pos_j = agent_pos_cur[1] # x
-        axs.scatter(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
+        axs.scatter(pos_j, pos_i, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
 
         # compute motion to next step
         agent_pos_cur = agent_positions_step[kk]
@@ -181,7 +181,7 @@ def init():
 
         # print(dx, dy)
 
-        axs.arrow(pos_j, pos_i, dx, dy, width=0.01)
+        axs.arrow(pos_j, pos_i, dx, dy, width=0.1)
 
         # input()
 
@@ -191,7 +191,7 @@ def init():
     return img,
 
 # choose the interval based on dt and the time to animate one step
-interval = 1000 #delay between frames in milliseconds
+interval = 100 #delay between frames in milliseconds
 
 
 def animate(i):
@@ -210,7 +210,7 @@ def animate(i):
         pos_i = pos[0] # y pos
         pos_j = pos[1] # x pos
         # print(pos)
-        axs.scatter(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
+        axs.scatter(pos_j, pos_i, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
 
         # compute motion to next step
         agent_pos_cur = agent_positions_step[kk]
@@ -219,7 +219,7 @@ def animate(i):
         dx = agent_pos_next[1] - agent_pos_cur[1]
         dy = agent_pos_next[0] - agent_pos_cur[0]
 
-        axs.arrow(pos_j, pos_i, dx, dy, width=0.01)
+        axs.arrow(pos_j, pos_i, dx, dy, width=0.1)
 
     axs.set_xlim(LIM_MIN, LIM_MAX)
     axs.set_ylim(LIM_MIN, LIM_MAX)
@@ -229,7 +229,7 @@ def animate(i):
 
 anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
 if DO_EXPORT_ANIM:
-    anim.save('raw_animation_rl_agent.gif', writer='imagemagick', fps=10)
+    anim.save('raw_animation_rl_agent.gif', writer='imagemagick', fps=1)
 
 
 plt.show()
