@@ -52,8 +52,11 @@ class Sandpile():
         self.STORE_STATE_BUFFER = STORE_STATE_BUFFER
         self.grid_buffer = []
         self.iteration = 0
-        self.agent_rewards = []
-        self.agent_positions = []
+        self.all_agent_rewards = []
+        self.all_agent_positions = []
+        self.all_agent_moves = []
+        self.all_agent_is_getting_avalanched = []
+        self.all_agent_iterations = [] # iteration step, not counting avalanches
 
     def step(self,):
         """Step the simulation mechanics once
@@ -94,15 +97,19 @@ class Sandpile():
             self.grid_buffer.append(np.copy(self.grid))
 
             # store agent positions
-            agent_positions_i = [agent.get_agent_pos() for agent in self.agents]
-            # print(agent_positions_i)
+            all_agent_positions_i = [agent.get_agent_pos() for agent in self.agents]
+            # print(all_agent_positions_i)
             # input()
-            self.agent_positions.append(agent_positions_i)
+            self.all_agent_positions.append(all_agent_positions_i)
+
+            # store agent moves
+            all_agent_moves_i = [agent.moves[-1] for agent in self.agents]
+            self.all_agent_moves.append(all_agent_moves_i)
 
 
         # update avalanche state
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
-
+        
         # Avalanche 
         while self.is_avalanching:
             self.avalanche()
@@ -113,9 +120,13 @@ class Sandpile():
                 self.grid_buffer.append(np.copy(self.grid))
 
                 # store agent positions
-                agent_positions_i = [agent.get_agent_pos() for agent in self.agents]
-                self.agent_positions.append(agent_positions_i)
-                # print(agent_positions_i)
+                all_agent_positions_i = [agent.get_agent_pos() for agent in self.agents]
+                self.all_agent_positions.append(all_agent_positions_i)
+
+                # store agent iteration
+                self.all_agent_iterations.append([self.iteration] * len(self.agents))
+
+                # print(all_agent_positions_i)
                 # input()
 
 
@@ -148,8 +159,18 @@ class Sandpile():
                 # self.agent_rewards_step[i] = np.min((-10, -agent.get_cumulative_score()))
                 # self.agent_rewards_step[i] = -100
                 pass
-
+        
         self.iteration += 1
+
+        # store if agents were getting avalanched
+        if self.STORE_STATE_BUFFER:
+            # store agent positions
+            all_agent_is_getting_avalanched_i = [agent.get_is_getting_avalanched() for agent in self.agents]
+            self.all_agent_positions.append(all_agent_positions_i)
+
+            self.all_agent_is_getting_avalanched.append(all_agent_is_getting_avalanched_i)
+
+        
 
         # establish that at least one agent is in the game, or if no agents were initialized
         # set this to true so that we can keep looping
@@ -165,7 +186,7 @@ class Sandpile():
             pass
         # input()
 
-        self.agent_rewards.append(self.agent_rewards_step)
+        self.all_agent_rewards.append(self.agent_rewards_step)
 
         return self.grid, self.agent_rewards_step, game_is_running
     
