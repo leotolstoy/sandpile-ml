@@ -130,8 +130,8 @@ for i in range(N_runs):
     
     sandpile.step()
 
-# M = len(grid_buffer)
 grid_buffer = sandpile.grid_buffer # M x (N_grid x N_grid)
+M = len(grid_buffer)
 
 # P = number of agents
 # positions in (i,j) convention
@@ -139,9 +139,10 @@ agent_positions = sandpile.all_agent_positions # M x (P x 2)
 agent_rewards = sandpile.all_agent_rewards # N_runs x (P)
 agent_rewards = np.array(agent_rewards)
 agent_cumulative_rewards = np.cumsum(agent_rewards)
-agent_iterations = sandpile.all_agent_iterations # M x (P)
-agent_is_getting_avalanched = sandpile.all_agent_is_getting_avalanched # N_runs x (P)
+agent_iterations = sandpile.all_agent_iterations # M x (1)
+agent_is_getting_avalanched = sandpile.all_agent_is_getting_avalanched # M x (P)
 agent_moves = sandpile.all_agent_moves  # N_runs x (P)
+is_avalanching_buffer = sandpile.is_avalanching_buffer # M x (1)
 
 # print(agent_positions)
 print('grid_buffer', len(grid_buffer))
@@ -150,24 +151,28 @@ print('agent_rewards', len(agent_rewards))
 print('agent_cumulative_rewards',len(agent_cumulative_rewards))
 print('agent_iterations', len(agent_iterations)) # [0, 1, ..., N_runs-1], serves as index
 print('agent_is_getting_avalanched', len(agent_is_getting_avalanched))
-print(agent_iterations)
+print(agent_is_getting_avalanched)
 print('agent_moves', len(agent_moves))
+print('is_avalanching_buffer', len(is_avalanching_buffer))
+print(is_avalanching_buffer)
 # input()
 
 # loop through the grid buffer
 frames = len(grid_buffer)
 
+arrow_width = 0.1
 
 def init():
     """initialize animation"""
     img = axs.imshow(grid_buffer[0],cmap=cmap,norm=norm, origin="lower")
     agent_positions_step = agent_positions[0]
     next_agent_positions_step = agent_positions[1]
+    agent_is_getting_avalanched_step = agent_is_getting_avalanched[0]
 
     for kk, agent_pos_cur in enumerate(agent_positions_step):
         pos_i = agent_pos_cur[0] # y
         pos_j = agent_pos_cur[1] # x
-        axs.scatter(pos_j, pos_i, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
+        
 
         # compute motion to next step
         agent_pos_cur = agent_positions_step[kk]
@@ -181,8 +186,14 @@ def init():
 
         # print(dx, dy)
 
-        axs.arrow(pos_j, pos_i, dx, dy, width=0.1)
+        # draw agent arrow if the agent moved of its own volition and no avalanche is happening
+        if not agent_is_getting_avalanched_step[kk] and not is_avalanching_buffer[0]:
+            axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='k')
+        elif agent_is_getting_avalanched_step[kk]:
+            axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='r')
 
+        # draw agent position
+        axs.scatter(pos_j, pos_i, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
         # input()
 
 
@@ -200,7 +211,9 @@ def animate(i):
     img = axs.imshow(grid_buffer[i],cmap=cmap,norm=norm, origin="lower")
 
     agent_positions_step = agent_positions[i]
-    if i <= N_runs:
+    agent_is_getting_avalanched_step = agent_is_getting_avalanched[i]
+
+    if i < M-1:
         next_agent_positions_step = agent_positions[i+1]
     else:
         next_agent_positions_step = agent_positions[i]
@@ -210,7 +223,7 @@ def animate(i):
         pos_i = pos[0] # y pos
         pos_j = pos[1] # x pos
         # print(pos)
-        axs.scatter(pos_j, pos_i, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
+        
 
         # compute motion to next step
         agent_pos_cur = agent_positions_step[kk]
@@ -219,7 +232,20 @@ def animate(i):
         dx = agent_pos_next[1] - agent_pos_cur[1]
         dy = agent_pos_next[0] - agent_pos_cur[0]
 
-        axs.arrow(pos_j, pos_i, dx, dy, width=0.1)
+        # print(agent_pos_cur)
+        # print(agent_pos_next)
+
+        # print(dx, dy)
+
+
+        # draw agent arrow if the agent moved of its own volition and no avalanche is happening
+        if not agent_is_getting_avalanched_step[kk] and not is_avalanching_buffer[i]:
+            axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='k')
+        elif agent_is_getting_avalanched_step[kk]:
+            axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='r')
+
+        # draw agent pos
+        axs.scatter(pos_j, pos_i, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
 
     axs.set_xlim(LIM_MIN, LIM_MAX)
     axs.set_ylim(LIM_MIN, LIM_MAX)
@@ -229,7 +255,7 @@ def animate(i):
 
 anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
 if DO_EXPORT_ANIM:
-    anim.save('raw_animation_rl_agent.gif', writer='imagemagick', fps=1)
+    anim.save('raw_animation_rl_agent.gif', writer='imagemagick', fps=3)
 
 
 plt.show()
