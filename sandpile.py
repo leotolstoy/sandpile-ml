@@ -107,7 +107,7 @@ class Sandpile():
             self.all_agent_moves.append(all_agent_moves_i)
 
             #store iterations for step
-            self.all_agent_iterations.append([self.iteration])
+            self.all_agent_iterations.append(self.iteration)
 
 
         # update avalanche state
@@ -127,7 +127,7 @@ class Sandpile():
                 self.all_agent_positions.append(all_agent_positions_i)
 
                 # store agent iteration
-                self.all_agent_iterations.append([self.iteration])
+                self.all_agent_iterations.append(self.iteration)
 
                 # print(all_agent_positions_i)
                 # input()

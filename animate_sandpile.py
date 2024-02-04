@@ -87,11 +87,17 @@ grid_buffer = sandpile.grid_buffer # M x (N_grid x N_grid)
 
 # P = number of agents
 # positions in (i,j) convention
-agent_positions = sandpile.agent_positions # M x (P x 2)
+agent_positions = sandpile.all_agent_positions # M x (P x 2)
+agent_rewards = sandpile.all_agent_rewards # N_runs x (P)
+agent_iterations = sandpile.all_agent_iterations # M x (P)
+agent_is_getting_avalanched = sandpile.all_agent_is_getting_avalanched # N_runs x (P)
+
 # print(agent_positions)
 print('grid_buffer', len(grid_buffer))
 print('agent_positions', len(agent_positions))
-
+print('agent_rewards', len(agent_rewards))
+print('agent_iterations', len(agent_iterations)) # [0, 1, ..., N_runs-1], serves as index
+print('agent_is_getting_avalanched', len(agent_is_getting_avalanched))
 # input()
 
 # loop through the grid buffer
@@ -108,11 +114,13 @@ def init():
         axs.scatter(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
 
     # axs.legend(loc='lower center',ncol=2,frameon=False, bbox_to_anchor=(0.5, -0.05))
+    axs.set_title(f'Step: 1/{N_runs}')
     return img,
 
 
 def animate(i):
     # print(i)
+    # input()
     axs.cla()  
     img = axs.imshow(grid_buffer[i],cmap=cmap,norm=norm, origin="lower")
 
@@ -123,7 +131,7 @@ def animate(i):
         pos_j = pos[0]
         # print(pos)
         axs.scatter(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
-
+    axs.set_title(f'Step: {agent_iterations[i] + 1}/{N_runs}')
     axs.set_xlim(LIM_MIN, LIM_MAX)
     axs.set_ylim(LIM_MIN, LIM_MAX)
     # axs.legend(loc='lower center',ncol=2,frameon=False, bbox_to_anchor=(0.5, -0.05))
