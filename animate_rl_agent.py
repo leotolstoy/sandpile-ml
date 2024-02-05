@@ -186,8 +186,8 @@ def init():
 
         # print(dx, dy)
 
-        # draw agent arrow if the agent moved of its own volition and no avalanche is happening
-        if not agent_is_getting_avalanched_step[kk] and not is_avalanching_buffer[0]:
+        # draw agent arrow if the agent moved away from the square of its own volition and no avalanche is happening 
+        if not agent_is_getting_avalanched_step[kk] and not is_avalanching_buffer[0] and not (dx == 0 and dy == 0):
             axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='k')
         elif agent_is_getting_avalanched_step[kk]:
             axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='r')
@@ -204,7 +204,7 @@ def init():
 # choose the interval based on dt and the time to animate one step
 interval = 100 #delay between frames in milliseconds
 
-
+prev_agent_positions_step = agent_positions[0]
 def animate(i):
     # print(i)
     axs.cla()  
@@ -212,12 +212,17 @@ def animate(i):
 
     agent_positions_step = agent_positions[i]
     agent_is_getting_avalanched_step = agent_is_getting_avalanched[i]
-
+    
     if i < M-1:
         next_agent_positions_step = agent_positions[i+1]
     else:
         next_agent_positions_step = agent_positions[i]
-            
+
+    if i > 0:
+        prev_agent_positions_step = agent_positions[i-1]
+    else:
+        prev_agent_positions_step = agent_positions[i]
+
     # draw agent positions
     for kk, pos in enumerate(agent_positions_step):
         pos_i = pos[0] # y pos
@@ -228,6 +233,7 @@ def animate(i):
         # compute motion to next step
         agent_pos_cur = agent_positions_step[kk]
         agent_pos_next = next_agent_positions_step[kk]
+        agent_pos_prev = prev_agent_positions_step[kk]
 
         dx = agent_pos_next[1] - agent_pos_cur[1]
         dy = agent_pos_next[0] - agent_pos_cur[0]
@@ -239,10 +245,10 @@ def animate(i):
 
 
         # draw agent arrow if the agent moved of its own volition and no avalanche is happening
-        if not agent_is_getting_avalanched_step[kk] and not is_avalanching_buffer[i]:
+        if not agent_is_getting_avalanched_step[kk] and not is_avalanching_buffer[i] and not (dx == 0 and dy == 0):
             axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='k')
         elif agent_is_getting_avalanched_step[kk]:
-            axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='r')
+            axs.scatter(agent_pos_prev[1], agent_pos_prev[0], color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk], alpha=0.5)
 
         # draw agent pos
         axs.scatter(pos_j, pos_i, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
@@ -255,7 +261,7 @@ def animate(i):
 
 anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
 if DO_EXPORT_ANIM:
-    anim.save('raw_animation_rl_agent.gif', writer='imagemagick', fps=3)
+    anim.save('raw_animation_rl_agent.gif', writer='imagemagick', fps=5)
 
 
 plt.show()
