@@ -134,7 +134,7 @@ for i in range(N_runs):
     sandpile.step()
 
 grid_buffer = sandpile.grid_buffer # M x (N_grid x N_grid)
-M = len(grid_buffer)
+M = len(grid_buffer) #number of agent steps + avalanche substeps
 
 # P = number of agents
 # positions in (i,j) convention
