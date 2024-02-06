@@ -19,6 +19,7 @@ class Agent():
         self.cumulative_rewards = []
         self.in_game = True
         self.is_getting_avalanched = False
+        self.was_moved_during_avalanche_step = False
 
 
     def choose_move(self, sandpile):
@@ -89,6 +90,12 @@ class Agent():
     def set_is_getting_avalanched(self, is_getting_avalanched):
         self.is_getting_avalanched = is_getting_avalanched
 
+    def get_was_moved_during_avalanche_step(self,):
+        return self.was_moved_during_avalanche_step
+
+    def set_was_moved_during_avalanche_step(self, was_moved):
+        self.was_moved_during_avalanche_step = was_moved
+
     def reset(self,):
         self.score = 0
         self.cumulative_score = 0
@@ -99,6 +106,7 @@ class Agent():
         self.cumulative_rewards = []
         self.in_game = True
         self.is_getting_avalanched = False
+        self.was_moved_during_avalanche_step = False
 
 
 class RandomAgent(Agent):

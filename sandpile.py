@@ -55,7 +55,7 @@ class Sandpile():
         self.all_agent_rewards = []
         self.all_agent_positions = []
         self.all_agent_moves = []
-        self.all_agent_is_getting_avalanched = []
+        self.all_agent_moved_during_avalanched = []
         self.all_agent_iterations = [] # iteration step, not counting avalanches
         self.is_avalanching_buffer = [] 
 
@@ -80,6 +80,7 @@ class Sandpile():
                 
                 agent.move_agent_in_direction(direction)
                 agent.set_is_getting_avalanched(False)
+                agent.set_was_moved_during_avalanche_step(False)
 
             # check agent position to see if they're still in the grid
             if agent.is_in_game() and not self.check_agent_is_in_grid(agent):
@@ -114,8 +115,8 @@ class Sandpile():
             self.is_avalanching_buffer.append(self.is_avalanching)
 
             # store if each agent is getting avalanched
-            all_agent_is_getting_avalanched_i = [agent.get_is_getting_avalanched() for agent in self.agents]
-            self.all_agent_is_getting_avalanched.append(all_agent_is_getting_avalanched_i)
+            all_agent_moved_during_avalanched_i = [agent.get_is_getting_avalanched() for agent in self.agents]
+            self.all_agent_moved_during_avalanched.append(all_agent_moved_during_avalanched_i)
 
 
         # update avalanche state
@@ -141,8 +142,8 @@ class Sandpile():
                 self.is_avalanching_buffer.append(self.is_avalanching)
 
                 # store if each agent is getting avalanched
-                all_agent_is_getting_avalanched_i = [agent.get_is_getting_avalanched() for agent in self.agents]
-                self.all_agent_is_getting_avalanched.append(all_agent_is_getting_avalanched_i)
+                all_agent_moved_during_avalanched_i = [agent.get_was_moved_during_avalanche_step() for agent in self.agents]
+                self.all_agent_moved_during_avalanched.append(all_agent_moved_during_avalanched_i)
 
                 # print(all_agent_positions_i)
                 # input()
@@ -262,6 +263,7 @@ class Sandpile():
             # check if agent is at the coordinate
             if agent.is_in_game():
                 agent_is_at_unstable_pos = agent.agent_is_at_pos(x_coord_unstable, y_coord_unstable)
+                agent.set_was_moved_during_avalanche_step(False)
 
             if agent.is_in_game() and agent_is_at_unstable_pos:
                 
@@ -271,8 +273,9 @@ class Sandpile():
                 # if the agent was avalanched, subtract a point
                 self.agent_rewards_step[i] -= 1
                 
-                #update agent is_getting_avalanched
+                #update agent is_getting_avalanched and if the agent was moved during this avalanche step
                 agent.set_is_getting_avalanched(True)
+                agent.set_was_moved_during_avalanche_step(True)
 
                 # check if agent is still in game
                 if not self.check_agent_is_in_grid(agent):

@@ -144,7 +144,7 @@ agent_rewards = sandpile.all_agent_rewards # N_runs x (P)
 agent_rewards = np.array(agent_rewards)
 agent_cumulative_rewards = np.cumsum(agent_rewards)
 agent_iterations = sandpile.all_agent_iterations # M x (1)
-agent_is_getting_avalanched = sandpile.all_agent_is_getting_avalanched # M x (P)
+agent_moved_during_avalanched = sandpile.all_agent_moved_during_avalanched # M x (P)
 agent_moves = sandpile.all_agent_moves  # N_runs x (P)
 is_avalanching_buffer = sandpile.is_avalanching_buffer # M x (1)
 
@@ -155,8 +155,8 @@ print(agent_positions)
 print('agent_rewards', len(agent_rewards))
 print('agent_cumulative_rewards',len(agent_cumulative_rewards))
 print('agent_iterations', len(agent_iterations)) # [0, 1, ..., N_runs-1], serves as index
-print('agent_is_getting_avalanched', len(agent_is_getting_avalanched))
-print(agent_is_getting_avalanched)
+print('agent_moved_during_avalanched', len(agent_moved_during_avalanched))
+print(agent_moved_during_avalanched)
 print('agent_moves', len(agent_moves))
 print('is_avalanching_buffer', len(is_avalanching_buffer))
 print(is_avalanching_buffer)
@@ -178,7 +178,7 @@ def animate(i):
     img = axs.imshow(grid_buffer[i],cmap=cmap,norm=norm, origin="lower")
 
     agent_positions_step = agent_positions[i]
-    agent_is_getting_avalanched_step = agent_is_getting_avalanched[i]
+    agent_moved_during_avalanched_step = agent_moved_during_avalanched[i]
     
     if i < M-1:
         next_agent_positions_step = agent_positions[i+1]
@@ -211,14 +211,14 @@ def animate(i):
         # print(dx, dy)
 
         # update index if agent is getting avalanched
-        if agent_is_getting_avalanched_step[kk]:
+        if agent_moved_during_avalanched_step[kk]:
             start_of_agent_avalanche_idx[kk] = i - 1
 
 
         # draw agent arrow if the agent moved of its own volition and no avalanche is happening
-        if not agent_is_getting_avalanched_step[kk] and not is_avalanching_buffer[i] and not (dx == 0 and dy == 0):
+        if not agent_moved_during_avalanched_step[kk] and not is_avalanching_buffer[i] and not (dx == 0 and dy == 0):
             axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='k')
-        elif agent_is_getting_avalanched_step[kk]:
+        elif agent_moved_during_avalanched_step[kk]:
             for jj in range(start_of_agent_avalanche_idx[kk], i):
                 prev_agent_positions_step_in_avalanche = agent_positions[jj][kk]
                 alpha = (0.7 - 0.3)*((jj - start_of_agent_avalanche_idx[kk])/(i - start_of_agent_avalanche_idx[kk])) + 0.3
