@@ -57,6 +57,7 @@ class Sandpile():
         self.all_agent_moves = []
         self.all_agent_is_getting_avalanched = []
         self.all_agent_iterations = [] # iteration step, not counting avalanches
+        self.is_avalanching_buffer = [] 
 
     def step(self,):
         """Step the simulation mechanics once
@@ -109,6 +110,13 @@ class Sandpile():
             #store iterations for step
             self.all_agent_iterations.append(self.iteration)
 
+            # store if avalanche was occurring
+            self.is_avalanching_buffer.append(self.is_avalanching)
+
+            # store if each agent is getting avalanched
+            all_agent_is_getting_avalanched_i = [agent.get_is_getting_avalanched() for agent in self.agents]
+            self.all_agent_is_getting_avalanched.append(all_agent_is_getting_avalanched_i)
+
 
         # update avalanche state
         self.is_avalanching = np.any(self.grid >= self.MAXIMUM_GRAINS)
@@ -128,6 +136,13 @@ class Sandpile():
 
                 # store agent iteration
                 self.all_agent_iterations.append(self.iteration)
+
+                # store if avalanche was occurring
+                self.is_avalanching_buffer.append(self.is_avalanching)
+
+                # store if each agent is getting avalanched
+                all_agent_is_getting_avalanched_i = [agent.get_is_getting_avalanched() for agent in self.agents]
+                self.all_agent_is_getting_avalanched.append(all_agent_is_getting_avalanched_i)
 
                 # print(all_agent_positions_i)
                 # input()
@@ -163,17 +178,7 @@ class Sandpile():
                 # self.agent_rewards_step[i] = -100
                 pass
         
-        self.iteration += 1
-
-        # store if agents were getting avalanched
-        if self.STORE_STATE_BUFFER:
-            # store agent positions
-            all_agent_is_getting_avalanched_i = [agent.get_is_getting_avalanched() for agent in self.agents]
-            self.all_agent_positions.append(all_agent_positions_i)
-
-            self.all_agent_is_getting_avalanched.append(all_agent_is_getting_avalanched_i)
-
-        
+        self.iteration += 1        
 
         # establish that at least one agent is in the game, or if no agents were initialized
         # set this to true so that we can keep looping
