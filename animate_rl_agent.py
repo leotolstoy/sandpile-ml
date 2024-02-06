@@ -120,8 +120,8 @@ print(initial_grid)
 sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=N_runs, STORE_STATE_BUFFER=True)
 
 # move agent to random position at beginning of episode
-# rl_policy_agent.move_agent_to_point(random.randint(0,N_grid-1), random.randint(0,N_grid-1))
-rl_policy_agent.move_agent_to_point(0,0)
+rl_policy_agent.move_agent_to_point(random.randint(0,N_grid-1), random.randint(0,N_grid-1))
+# rl_policy_agent.move_agent_to_point(0,0)
 
 # AGENT_NAMES = ['Random Agent', 'RL Agent']
 AGENT_NAMES = ['RL Agent']
@@ -139,7 +139,7 @@ M = len(grid_buffer)
 
 # P = number of agents
 # positions in (i,j) convention
-agent_positions = sandpile.all_agent_positions # M x (P x 2)
+agent_positions = sandpile.all_agent_positions # M x P x 2
 agent_rewards = sandpile.all_agent_rewards # N_runs x (P)
 agent_rewards = np.array(agent_rewards)
 agent_cumulative_rewards = np.cumsum(agent_rewards)
@@ -151,7 +151,6 @@ is_avalanching_buffer = sandpile.is_avalanching_buffer # M x (1)
 # print(agent_positions)
 print('grid_buffer', len(grid_buffer))
 print('agent_positions', len(agent_positions))
-print(agent_positions)
 print('agent_rewards', len(agent_rewards))
 print('agent_cumulative_rewards',len(agent_cumulative_rewards))
 print('agent_iterations', len(agent_iterations)) # [0, 1, ..., N_runs-1], serves as index
@@ -159,7 +158,7 @@ print('agent_moved_during_avalanched', len(agent_moved_during_avalanched))
 print(agent_moved_during_avalanched)
 print('agent_moves', len(agent_moves))
 print('is_avalanching_buffer', len(is_avalanching_buffer))
-print(is_avalanching_buffer)
+# print(is_avalanching_buffer)
 # input()
 
 # loop through the grid buffer
@@ -171,6 +170,7 @@ arrow_width = 0.1
 interval = 100 #delay between frames in milliseconds
 
 start_of_agent_avalanche_idx = [-1] * len(agents)
+is_agent_start_getting_avalanched_step = [False] * len(agents)
 
 def animate(i):
     # print(i)
@@ -185,44 +185,46 @@ def animate(i):
     else:
         next_agent_positions_step = agent_positions[i]
 
-    if i > 0:
-        prev_agent_positions_step = agent_positions[i-1]
-    else:
-        prev_agent_positions_step = agent_positions[i]
-
-    # draw agent positions
+    # draw agent positions and motions
     for kk, pos in enumerate(agent_positions_step):
         pos_i = pos[0] # y pos
         pos_j = pos[1] # x pos
-        # print(pos)
         
-
         # compute motion to next step
         agent_pos_cur = agent_positions_step[kk]
         agent_pos_next = next_agent_positions_step[kk]
-        agent_pos_prev = prev_agent_positions_step[kk]
 
         dx = agent_pos_next[1] - agent_pos_cur[1]
         dy = agent_pos_next[0] - agent_pos_cur[0]
 
-        # print(agent_pos_cur)
-        # print(agent_pos_next)
-
-        # print(dx, dy)
-
         # update index if agent is getting avalanched
         if agent_moved_during_avalanched_step[kk]:
-            start_of_agent_avalanche_idx[kk] = i - 1
 
-
+            # update flag for if the agent is starting to get avalanched
+            if not is_agent_start_getting_avalanched_step[kk]:
+                is_agent_start_getting_avalanched_step[kk] = True
+            
+            # set index for when the agent started getting avalanche
+            if is_agent_start_getting_avalanched_step[kk]:
+                if i > 0:
+                    start_of_agent_avalanche_idx[kk] = i - 1
+                else:
+                    start_of_agent_avalanche_idx[kk] = i
+        else:
+            is_agent_start_getting_avalanched_step[kk] = False
+            
         # draw agent arrow if the agent moved of its own volition and no avalanche is happening
         if not agent_moved_during_avalanched_step[kk] and not is_avalanching_buffer[i] and not (dx == 0 and dy == 0):
             axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='k')
+            
         elif agent_moved_during_avalanched_step[kk]:
+            print('fdsf')
             for jj in range(start_of_agent_avalanche_idx[kk], i):
+                print(jj)
                 prev_agent_positions_step_in_avalanche = agent_positions[jj][kk]
                 alpha = (0.7 - 0.3)*((jj - start_of_agent_avalanche_idx[kk])/(i - start_of_agent_avalanche_idx[kk])) + 0.3
                 axs.scatter(prev_agent_positions_step_in_avalanche[1], prev_agent_positions_step_in_avalanche[0], color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk], alpha=alpha)
+            
 
         # draw agent pos
         axs.scatter(pos_j, pos_i, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
