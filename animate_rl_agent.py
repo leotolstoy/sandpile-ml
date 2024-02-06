@@ -119,6 +119,10 @@ print('initial grid')
 print(initial_grid)
 sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=N_runs, STORE_STATE_BUFFER=True)
 
+# move agent to random position at beginning of episode
+# rl_policy_agent.move_agent_to_point(random.randint(0,N_grid-1), random.randint(0,N_grid-1))
+rl_policy_agent.move_agent_to_point(0,0)
+
 # AGENT_NAMES = ['Random Agent', 'RL Agent']
 AGENT_NAMES = ['RL Agent']
 
@@ -147,6 +151,7 @@ is_avalanching_buffer = sandpile.is_avalanching_buffer # M x (1)
 # print(agent_positions)
 print('grid_buffer', len(grid_buffer))
 print('agent_positions', len(agent_positions))
+print(agent_positions)
 print('agent_rewards', len(agent_rewards))
 print('agent_cumulative_rewards',len(agent_cumulative_rewards))
 print('agent_iterations', len(agent_iterations)) # [0, 1, ..., N_runs-1], serves as index
@@ -162,49 +167,11 @@ frames = len(grid_buffer)
 
 arrow_width = 0.1
 
-def init():
-    """initialize animation"""
-    img = axs.imshow(grid_buffer[0],cmap=cmap,norm=norm, origin="lower")
-    agent_positions_step = agent_positions[0]
-    next_agent_positions_step = agent_positions[1]
-    agent_is_getting_avalanched_step = agent_is_getting_avalanched[0]
-
-    for kk, agent_pos_cur in enumerate(agent_positions_step):
-        pos_i = agent_pos_cur[0] # y
-        pos_j = agent_pos_cur[1] # x
-        
-
-        # compute motion to next step
-        agent_pos_cur = agent_positions_step[kk]
-        agent_pos_next = next_agent_positions_step[kk]
-
-        dx = agent_pos_next[1] - agent_pos_cur[1]
-        dy = agent_pos_next[0] - agent_pos_cur[0]
-        # print('wdf')
-        # print(agent_pos_cur)
-        # print(agent_pos_next)
-
-        # print(dx, dy)
-
-        # draw agent arrow if the agent moved away from the square of its own volition and no avalanche is happening 
-        if not agent_is_getting_avalanched_step[kk] and not is_avalanching_buffer[0] and not (dx == 0 and dy == 0):
-            axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='k')
-        elif agent_is_getting_avalanched_step[kk]:
-            axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='r')
-
-        # draw agent position
-        axs.scatter(pos_j, pos_i, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
-        # input()
-
-
-    axs.set_title(f'Step: 1/{N_runs}, Agent Score: {agent_cumulative_rewards[0]}')
-
-    return img,
-
 # choose the interval based on dt and the time to animate one step
 interval = 100 #delay between frames in milliseconds
 
-prev_agent_positions_step = agent_positions[0]
+start_of_agent_avalanche_idx = [-1] * len(agents)
+
 def animate(i):
     # print(i)
     axs.cla()  
@@ -243,12 +210,19 @@ def animate(i):
 
         # print(dx, dy)
 
+        # update index if agent is getting avalanched
+        if agent_is_getting_avalanched_step[kk]:
+            start_of_agent_avalanche_idx[kk] = i - 1
+
 
         # draw agent arrow if the agent moved of its own volition and no avalanche is happening
         if not agent_is_getting_avalanched_step[kk] and not is_avalanching_buffer[i] and not (dx == 0 and dy == 0):
             axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='k')
         elif agent_is_getting_avalanched_step[kk]:
-            axs.scatter(agent_pos_prev[1], agent_pos_prev[0], color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk], alpha=0.5)
+            for jj in range(start_of_agent_avalanche_idx[kk], i):
+                prev_agent_positions_step_in_avalanche = agent_positions[jj][kk]
+                alpha = (0.7 - 0.3)*((jj - start_of_agent_avalanche_idx[kk])/(i - start_of_agent_avalanche_idx[kk])) + 0.3
+                axs.scatter(prev_agent_positions_step_in_avalanche[1], prev_agent_positions_step_in_avalanche[0], color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk], alpha=alpha)
 
         # draw agent pos
         axs.scatter(pos_j, pos_i, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
@@ -258,6 +232,9 @@ def animate(i):
     axs.set_title(f'Step: {agent_iterations[i] + 1}/{N_runs}, Agent Score: {agent_cumulative_rewards[agent_iterations[i]]}')
     
     return img, 
+
+def init():
+    return animate(0)
 
 anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
 if DO_EXPORT_ANIM:
