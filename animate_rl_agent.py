@@ -15,7 +15,7 @@ from rl_agents import Policy
 N_grid = 10 #number of cells per side
 N_tick_step = 1
 MAXIMUM_GRAINS = 4
-N_runs = 20
+N_runs = 200
 
 I = 0
 fig = plt.figure()
@@ -119,8 +119,8 @@ print(initial_grid)
 sandpile = Sandpile(N_grid=N_grid, initial_grid=initial_grid, MAXIMUM_GRAINS=MAXIMUM_GRAINS, agents=agents, MAX_STEPS=N_runs, STORE_STATE_BUFFER=True)
 
 # move agent to random position at beginning of episode
-rl_policy_agent.move_agent_to_point(random.randint(0,N_grid-1), random.randint(0,N_grid-1))
-# rl_policy_agent.move_agent_to_point(0,0)
+# rl_policy_agent.move_agent_to_point(random.randint(0,N_grid-1), random.randint(0,N_grid-1))
+rl_policy_agent.move_agent_to_point(0,0)
 
 # AGENT_NAMES = ['Random Agent', 'RL Agent']
 AGENT_NAMES = ['RL Agent']
@@ -154,15 +154,13 @@ print('agent_rewards', len(agent_rewards))
 print('agent_cumulative_rewards',len(agent_cumulative_rewards))
 print('agent_iterations', len(agent_iterations)) # [0, 1, ..., N_runs-1], serves as index
 print('agent_moved_during_avalanched', len(agent_moved_during_avalanched))
-print(agent_moved_during_avalanched)
+# print(agent_moved_during_avalanched)
 print('agent_moves', len(agent_moves))
 print('is_avalanching_buffer', len(is_avalanching_buffer))
-# print(is_avalanching_buffer)
 # input()
 
-# loop through the grid buffer
-frames = len(grid_buffer)
 
+frames = len(grid_buffer)
 arrow_width = 0.1
 
 # choose the interval based on dt and the time to animate one step
@@ -204,7 +202,6 @@ def animate(i):
                 is_agent_start_getting_avalanched_step[kk] = True
             
             # set index for when the agent started getting avalanche
-            # if is_agent_start_getting_avalanched_step[kk]:
                 if i > 0:
                     start_of_agent_avalanche_idx[kk] = i - 1
                 else:
@@ -217,12 +214,9 @@ def animate(i):
             axs.arrow(pos_j, pos_i, dx, dy, width=arrow_width, color='k')
             
         elif agent_moved_during_avalanched_step[kk]:
-            print('fdsf')
             for jj in range(start_of_agent_avalanche_idx[kk], i):
-                print(jj, i)
                 prev_agent_positions_step_in_avalanche = agent_positions[jj][kk]
-                alpha = (0.7 - 0.5)*((jj - start_of_agent_avalanche_idx[kk])/(i - start_of_agent_avalanche_idx[kk])) + 0.5
-                print('alpha', alpha)
+                alpha = 0.7 - (0.5)*((jj - start_of_agent_avalanche_idx[kk])/(i - start_of_agent_avalanche_idx[kk]))
                 axs.scatter(prev_agent_positions_step_in_avalanche[1], prev_agent_positions_step_in_avalanche[0], color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk], alpha=alpha)
             
 
