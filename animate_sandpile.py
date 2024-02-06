@@ -103,19 +103,19 @@ print('agent_is_getting_avalanched', len(agent_is_getting_avalanched))
 # loop through the grid buffer
 frames = len(grid_buffer)
 
-def init():
-    """initialize animation"""
-    img = axs.imshow(grid_buffer[0],cmap=cmap,norm=norm, origin="lower")
-    agent_positions_step = agent_positions[0]
+# def init():
+#     """initialize animation"""
+#     img = axs.imshow(grid_buffer[0],cmap=cmap,norm=norm, origin="lower")
+#     agent_positions_step = agent_positions[0]
 
-    for kk, pos in enumerate(agent_positions_step):
-        pos_i = pos[1]
-        pos_j = pos[0]
-        axs.scatter(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
+#     for kk, pos in enumerate(agent_positions_step):
+#         pos_i = pos[1]
+#         pos_j = pos[0]
+#         axs.scatter(pos_i, pos_j, color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk])
 
-    # axs.legend(loc='lower center',ncol=2,frameon=False, bbox_to_anchor=(0.5, -0.05))
-    axs.set_title(f'Step: 1/{N_runs}')
-    return img,
+#     # axs.legend(loc='lower center',ncol=2,frameon=False, bbox_to_anchor=(0.5, -0.05))
+#     axs.set_title(f'Step: 1/{N_runs}')
+#     return img,
 
 
 def animate(i):
@@ -136,6 +136,9 @@ def animate(i):
     axs.set_ylim(LIM_MIN, LIM_MAX)
     # axs.legend(loc='lower center',ncol=2,frameon=False, bbox_to_anchor=(0.5, -0.05))
     return img, 
+
+def init():
+    return animate(0)
 
 # choose the interval based on dt and the time to animate one step
 interval = 100 #delay between frames in milliseconds
