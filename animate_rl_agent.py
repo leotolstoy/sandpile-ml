@@ -11,10 +11,9 @@ import torch
 from torch_util import enum_parameters
 from rl_agents import Policy
 
+# Set up grid parameters
 N_grid = 10 #number of cells per side
-# N_tick_step = 5
 N_tick_step = 1
-
 MAXIMUM_GRAINS = 4
 N_runs = 20
 
@@ -44,8 +43,8 @@ axs.set_yticks(np.arange(-.5, N_grid, N_tick_step))
 # https://stackoverflow.com/questions/43971138/python-plotting-colored-grid-based-on-values
 # https://stackoverflow.com/questions/7229971/2d-grid-data-visualization-in-python
 # https://matplotlib.org/stable/api/_as_gen/matplotlib.animation.FuncAnimation.html
-# cmap = plt.cm.viridis
-cmap = plt.cm.get_cmap('Blues')
+# cmap = plt.cm.get_cmap('Blues')
+cmap = plt.colormaps['Blues']
 bounds = np.arange(0, MAXIMUM_GRAINS+1)
 norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
 
@@ -205,7 +204,7 @@ def animate(i):
                 is_agent_start_getting_avalanched_step[kk] = True
             
             # set index for when the agent started getting avalanche
-            if is_agent_start_getting_avalanched_step[kk]:
+            # if is_agent_start_getting_avalanched_step[kk]:
                 if i > 0:
                     start_of_agent_avalanche_idx[kk] = i - 1
                 else:
@@ -220,9 +219,10 @@ def animate(i):
         elif agent_moved_during_avalanched_step[kk]:
             print('fdsf')
             for jj in range(start_of_agent_avalanche_idx[kk], i):
-                print(jj)
+                print(jj, i)
                 prev_agent_positions_step_in_avalanche = agent_positions[jj][kk]
-                alpha = (0.7 - 0.3)*((jj - start_of_agent_avalanche_idx[kk])/(i - start_of_agent_avalanche_idx[kk])) + 0.3
+                alpha = (0.7 - 0.5)*((jj - start_of_agent_avalanche_idx[kk])/(i - start_of_agent_avalanche_idx[kk])) + 0.5
+                print('alpha', alpha)
                 axs.scatter(prev_agent_positions_step_in_avalanche[1], prev_agent_positions_step_in_avalanche[0], color=AGENT_COLOR_CODES[kk], marker='o', s=144, label=AGENT_NAMES[kk], alpha=alpha)
             
 
@@ -240,7 +240,7 @@ def init():
 
 anim = animation.FuncAnimation(fig, animate, frames=frames, interval=interval, blit=True, repeat=False, init_func=init)
 if DO_EXPORT_ANIM:
-    anim.save('raw_animation_rl_agent.gif', writer='imagemagick', fps=5)
+    anim.save('raw_animation_rl_agent.gif', writer='imagemagick', fps=10)
 
 
 plt.show()
